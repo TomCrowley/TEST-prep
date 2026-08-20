@@ -1,6 +1,7 @@
 import type { Question } from '../types'
 import type { SessionResult } from '../game'
 import { MEDALS, getRankProgress } from '../game'
+import { useSwipeLeft } from '../useSwipeLeft'
 
 interface Props {
   questions: Question[]
@@ -20,8 +21,10 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
   const rankAfter = getRankProgress(xpBefore + xpEarned)
   const rankedUp = rankAfter.index > rankBefore.index
 
+  const swipeHandlers = useSwipeLeft(true, onHome)
+
   return (
-    <div className="screen results">
+    <div className="screen results" {...swipeHandlers}>
       <div className="score-card">
         <span className="score-label">Battle Score</span>
         <span className="score-pct">{summary.score.toLocaleString()}</span>
@@ -94,12 +97,13 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
       )}
 
       <div className="results-actions">
-        <button className="primary-button" onClick={onPracticeAgain}>
-          Practice again
-        </button>
-        <button className="secondary-button" onClick={onHome}>
+        <button className="primary-button" onClick={onHome}>
           Back home
         </button>
+        <button className="secondary-button" onClick={onPracticeAgain}>
+          Practice another 10
+        </button>
+        <p className="swipe-hint">or swipe left for home</p>
       </div>
     </div>
   )

@@ -1,26 +1,36 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
-
-const SWIPE_THRESHOLD = 40
-// How far the page can scroll during a touch before we treat it as a
-// deliberate scroll (reading a long explanation) instead of swipe drift.
-const SCROLL_CANCEL_THRESHOLD = 120
+import { useSwipeLeft } from '../useSwipeLeft'
 
 interface Props {
   questions: Question[]
+  initialIndex?: number
+  initialSelected?: number | null
+  initialAnswers?: SessionAnswer[]
   onAnswer: (questionId: string, section: Section, correct: boolean) => void
   onXpEarned: (points: number) => void
+  onProgressChange: (index: number, selected: number | null, answers: SessionAnswer[]) => void
   onFinish: (answers: SessionAnswer[], questionsById: Map<string, Question>) => void
   onExit: () => void
 }
 
 const DIFFICULTY_LABEL: Record<string, string> = { E: 'Easy', M: 'Medium', H: 'Hard' }
 
-export default function Practice({ questions, onAnswer, onXpEarned, onFinish, onExit }: Props) {
-  const [index, setIndex] = useState(0)
-  const [selected, setSelected] = useState<number | null>(null)
-  const [answers, setAnswers] = useState<SessionAnswer[]>([])
+export default function Practice({
+  questions,
+  initialIndex = 0,
+  initialSelected = null,
+  initialAnswers = [],
+  onAnswer,
+  onXpEarned,
+  onProgressChange,
+  onFinish,
+  onExit,
+}: Props) {
+  const [index, setIndex] = useState(initialIndex)
+  const [selected, setSelected] = useState<number | null>(initialSelected)
+  const [answers, setAnswers] = useState<SessionAnswer[]>(initialAnswers)
 
   const questionsById = useMemo(() => new Map(questions.map((q) => [q.id, q])), [questions])
   const summary = useMemo(() => computeSessionSummary(answers, questionsById), [answers, questionsById])
@@ -31,6 +41,12 @@ export default function Practice({ questions, onAnswer, onXpEarned, onFinish, on
   const question = questions[index]
   const isLast = index === questions.length - 1
   const hasAnswered = selected !== null
+
+  // Let the parent persist this so an accidental refresh resumes here
+  // instead of dropping back to the home screen.
+  useEffect(() => {
+    onProgressChange(index, selected, answers)
+  }, [index, selected, answers, onProgressChange])
 
   // A swipe gesture can leave native momentum scrolling in flight, which
   // fights a single synchronous scrollTo. Re-assert the top position on
@@ -48,30 +64,6 @@ export default function Practice({ questions, onAnswer, onXpEarned, onFinish, on
       clearTimeout(timeout)
     }
   }, [index])
-
-  const touchStart = useRef<{ x: number; y: number; scrollY: number } | null>(null)
-
-  function handleTouchStart(e: React.TouchEvent) {
-    const t = e.touches[0]
-    touchStart.current = { x: t.clientX, y: t.clientY, scrollY: window.scrollY }
-  }
-
-  function handleTouchEnd(e: React.TouchEvent) {
-    const start = touchStart.current
-    touchStart.current = null
-    if (!hasAnswered || !start) return
-    // A real horizontal swipe often nudges the page a little too (the
-    // browser scrolls in parallel with our gesture tracking) — only bail
-    // out for a scroll distance big enough to mean "reading a long
-    // explanation," not incidental drift from an intentional swipe.
-    if (Math.abs(window.scrollY - start.scrollY) > SCROLL_CANCEL_THRESHOLD) return
-    const t = e.changedTouches[0]
-    const dx = t.clientX - start.x
-    const dy = t.clientY - start.y
-    if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 2) {
-      next()
-    }
-  }
 
   function choose(choiceIndex: number) {
     if (hasAnswered) return
@@ -93,8 +85,10 @@ export default function Practice({ questions, onAnswer, onXpEarned, onFinish, on
     setSelected(null)
   }
 
+  const swipeHandlers = useSwipeLeft(hasAnswered, next)
+
   return (
-    <div className="screen practice" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className="screen practice" {...swipeHandlers}>
       <div className="practice-header">
         <button className="icon-button" onClick={onExit} aria-label="Exit practice">
           ✕
