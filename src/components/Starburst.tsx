@@ -20,16 +20,25 @@ function makeSparks(): Spark[] {
   }))
 }
 
+interface Props {
+  /** Screen coordinates (e.g. from a click/tap event) to burst from. Falls back to viewport center if omitted. */
+  origin?: { x: number; y: number }
+}
+
 // A one-shot burst, meant to be remounted (via a changing `key` on the
 // caller's side) each time a correct answer should be celebrated. Rays
 // travel out to the edge of the viewport; sparks scatter at randomized
 // angles/distances/colors for a denser, less mechanical explosion. Spark
 // layout is randomized once per mount (not on every render).
-export default function Starburst() {
+export default function Starburst({ origin }: Props) {
   const [sparks] = useState(makeSparks)
 
   return (
-    <div className="starburst" aria-hidden="true">
+    <div
+      className="starburst"
+      aria-hidden="true"
+      style={origin ? { left: origin.x, top: origin.y } : undefined}
+    >
       <div className="starburst-flash" />
       {Array.from({ length: RAY_COUNT }).map((_, i) => (
         <span

@@ -607,7 +607,10 @@ button {
 /* Starburst: fires once per correct answer for a bit of extra dopamine */
 .starburst {
   position: fixed;
-  inset: 0;
+  left: 50vw;
+  top: 50vh;
+  width: 0;
+  height: 0;
   display: flex;
   align-items: center;
   justify-content: center;

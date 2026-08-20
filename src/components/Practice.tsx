@@ -35,6 +35,7 @@ export default function Practice({
   const [index, setIndex] = useState(initialIndex)
   const [selected, setSelected] = useState<number | null>(initialSelected)
   const [answers, setAnswers] = useState<SessionAnswer[]>(initialAnswers)
+  const [burstOrigin, setBurstOrigin] = useState<{ x: number; y: number } | null>(null)
 
   const questionsById = useMemo(() => new Map(questions.map((q) => [q.id, q])), [questions])
   const summary = useMemo(() => computeSessionSummary(answers, questionsById), [answers, questionsById])
@@ -69,13 +70,14 @@ export default function Practice({
     }
   }, [index])
 
-  function choose(choiceIndex: number) {
+  function choose(choiceIndex: number, event: React.MouseEvent) {
     if (hasAnswered) return
     const correct = choiceIndex === question.correctIndex
     setSelected(choiceIndex)
     onAnswer(question.id, question.section, correct)
     setAnswers((prev) => [...prev, { questionId: question.id, chosenIndex: choiceIndex, correct }])
     if (correct) {
+      setBurstOrigin({ x: event.clientX, y: event.clientY })
       onXpEarned(pointsForCorrectAnswer(currentStreak + 1, question.difficulty))
     }
   }
@@ -144,7 +146,7 @@ export default function Practice({
               <button
                 key={i}
                 className={`choice ${state}`}
-                onClick={() => choose(i)}
+                onClick={(e) => choose(i, e)}
                 disabled={hasAnswered}
               >
                 <span className="choice-letter">{String.fromCharCode(65 + i)}</span>
@@ -154,7 +156,9 @@ export default function Practice({
           })}
         </div>
 
-        {hasAnswered && selected === question.correctIndex && <Starburst key={question.id} />}
+        {hasAnswered && selected === question.correctIndex && (
+          <Starburst key={question.id} origin={burstOrigin ?? undefined} />
+        )}
 
         {hasAnswered && (
           <div className={`feedback ${selected === question.correctIndex ? 'good' : 'bad'}`}>
