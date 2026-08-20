@@ -161,22 +161,17 @@ button {
   opacity: 0.35;
 }
 
-.stats-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: var(--shadow);
-}
 .stats-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   font-size: 14px;
   color: var(--text-muted);
+}
+.stats-row-divided {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 4px;
 }
 .stats-row strong {
   color: var(--text-h);

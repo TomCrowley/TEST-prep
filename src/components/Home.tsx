@@ -60,6 +60,17 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
             ? `${(rankProgress.xpForNextRank! - rankProgress.xpIntoRank).toLocaleString()} XP to ${rankProgress.nextRank.name}`
             : 'Max rank reached'}
         </span>
+
+        <div className="stats-row stats-row-divided">
+          <span>Questions seen</span>
+          <strong>
+            {overall.answered} / {overall.total}
+          </strong>
+        </div>
+        <div className="stats-row">
+          <span>Overall accuracy</span>
+          <strong>{overall.accuracy === null ? '—' : `${overall.accuracy}%`}</strong>
+        </div>
       </div>
 
       <div className="medal-case">
@@ -71,19 +82,6 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
             </div>
           )
         })}
-      </div>
-
-      <div className="stats-card">
-        <div className="stats-row">
-          <span>Questions seen</span>
-          <strong>
-            {overall.answered} / {overall.total}
-          </strong>
-        </div>
-        <div className="stats-row">
-          <span>Overall accuracy</span>
-          <strong>{overall.accuracy === null ? '—' : `${overall.accuracy}%`}</strong>
-        </div>
       </div>
 
       <div className="section-list">
