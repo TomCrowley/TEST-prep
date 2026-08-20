@@ -80,6 +80,12 @@ button {
 .home h1 {
   font-size: 32px;
   letter-spacing: -0.5px;
+  color: #aab4bd;
+  text-shadow:
+    0 0 3px rgba(46, 140, 255, 0.6),
+    0 0 16px rgba(46, 140, 255, 0.45),
+    0 0 32px rgba(46, 140, 255, 0.25);
+  -webkit-text-stroke: 1px rgba(238, 244, 246, 0.15);
 }
 .home .tagline {
   color: var(--gold);
