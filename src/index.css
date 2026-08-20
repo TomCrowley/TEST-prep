@@ -78,7 +78,9 @@ button {
   padding: 24px 4px 8px;
 }
 .home h1 {
+  font-family: 'Alfa Slab One', ui-serif, Georgia, serif;
   font-size: 32px;
+  font-weight: 400;
   letter-spacing: -0.5px;
   color: #aab4bd;
   text-shadow:
