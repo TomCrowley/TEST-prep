@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier } from '../game'
+
+const SWIPE_THRESHOLD = 60
 
 interface Props {
   questions: Question[]
@@ -26,6 +28,25 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
   const isLast = index === questions.length - 1
   const hasAnswered = selected !== null
 
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+
+  function handleTouchStart(e: React.TouchEvent) {
+    const t = e.touches[0]
+    touchStart.current = { x: t.clientX, y: t.clientY }
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const start = touchStart.current
+    touchStart.current = null
+    if (!hasAnswered || !start) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - start.x
+    const dy = t.clientY - start.y
+    if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      next()
+    }
+  }
+
   function choose(choiceIndex: number) {
     if (hasAnswered) return
     const correct = choiceIndex === question.correctIndex
@@ -44,7 +65,7 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
   }
 
   return (
-    <div className="screen practice">
+    <div className="screen practice" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       <div className="practice-header">
         <button className="icon-button" onClick={onExit} aria-label="Exit practice">
           ✕
@@ -124,9 +145,12 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
       </div>
 
       {hasAnswered && (
-        <button className="primary-button" onClick={next}>
-          {isLast ? 'See results' : 'Next question'}
-        </button>
+        <>
+          <button className="primary-button" onClick={next}>
+            {isLast ? 'See results' : 'Next question'}
+          </button>
+          <p className="swipe-hint">or swipe left</p>
+        </>
       )}
     </div>
   )

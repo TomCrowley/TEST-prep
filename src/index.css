@@ -531,6 +531,12 @@ button {
 .primary-button:active {
   opacity: 0.85;
 }
+.swipe-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -8px;
+}
 
 .secondary-button {
   background: none;
