@@ -56,6 +56,7 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
   }
 
   function next() {
+    window.scrollTo(0, 0)
     if (isLast) {
       onFinish(answers, questionsById)
       return
