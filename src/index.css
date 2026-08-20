@@ -1,44 +1,26 @@
 :root {
-  --text: #4b4553;
-  --text-h: #16131c;
-  --text-muted: #857e91;
-  --bg: #faf9fc;
-  --card-bg: #ffffff;
-  --border: #e5e2ea;
-  --accent: #7c3aed;
-  --accent-bg: rgba(124, 58, 237, 0.1);
-  --good: #15803d;
-  --good-bg: rgba(21, 128, 61, 0.1);
-  --bad: #b91c1c;
-  --bad-bg: rgba(185, 28, 28, 0.1);
-  --shadow: rgba(22, 19, 28, 0.06) 0 4px 16px;
+  --text: #c4bfcc;
+  --text-h: #f4f2f7;
+  --text-muted: #8b8496;
+  --bg: #131117;
+  --card-bg: #1c1a22;
+  --border: #302c39;
+  --accent: #a78bfa;
+  --accent-bg: rgba(167, 139, 250, 0.15);
+  --good: #4ade80;
+  --good-bg: rgba(74, 222, 128, 0.12);
+  --bad: #f87171;
+  --bad-bg: rgba(248, 113, 113, 0.12);
+  --shadow: rgba(0, 0, 0, 0.4) 0 4px 16px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
 
   font: 16px/145% var(--sans);
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #c4bfcc;
-    --text-h: #f4f2f7;
-    --text-muted: #8b8496;
-    --bg: #131117;
-    --card-bg: #1c1a22;
-    --border: #302c39;
-    --accent: #a78bfa;
-    --accent-bg: rgba(167, 139, 250, 0.15);
-    --good: #4ade80;
-    --good-bg: rgba(74, 222, 128, 0.12);
-    --bad: #f87171;
-    --bad-bg: rgba(248, 113, 113, 0.12);
-    --shadow: rgba(0, 0, 0, 0.4) 0 4px 16px;
-  }
 }
 
 * {
