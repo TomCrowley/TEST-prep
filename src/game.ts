@@ -3,6 +3,10 @@ import type { Difficulty, Question, SessionAnswer } from './types'
 export const DIFFICULTY_POINTS: Record<Difficulty, number> = { E: 100, M: 150, H: 250 }
 const DEFAULT_POINTS = 100
 
+// Flat bonus for finishing a full session (as opposed to exiting early) —
+// worth one Easy question.
+export const SESSION_COMPLETE_BONUS = DIFFICULTY_POINTS.E
+
 export interface StreakTier {
   min: number
   multiplier: number
@@ -145,6 +149,7 @@ export interface SessionResult {
   summary: SessionSummary
   xpBefore: number
   xpEarned: number
+  completionBonus: number
   newMedalIds: string[]
 }
 

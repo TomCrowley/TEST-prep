@@ -3,7 +3,7 @@ import { loadQuestions } from './questionBank'
 import { shuffle } from './shuffle'
 import { useProgress } from './useProgress'
 import { useProfile } from './useProfile'
-import { computeSessionSummary, evaluateNewMedals, type SessionResult } from './game'
+import { computeSessionSummary, evaluateNewMedals, SESSION_COMPLETE_BONUS, type SessionResult } from './game'
 import type { Question, Section, SessionAnswer } from './types'
 import Home from './components/Home'
 import Practice from './components/Practice'
@@ -54,7 +54,14 @@ function App() {
     const lifetimeAttempts = Object.values(progress).reduce((sum, s) => sum + s.attempts, 0)
     const newMedalIds = evaluateNewMedals(summary, lifetimeAttempts, new Set(profile.medals))
     awardMedals(newMedalIds)
-    setSessionResult({ summary, xpBefore: sessionStartXp.current, xpEarned: summary.score, newMedalIds })
+    addXp(SESSION_COMPLETE_BONUS)
+    setSessionResult({
+      summary,
+      xpBefore: sessionStartXp.current,
+      xpEarned: summary.score + SESSION_COMPLETE_BONUS,
+      completionBonus: SESSION_COMPLETE_BONUS,
+      newMedalIds,
+    })
     setScreen('results')
   }
 

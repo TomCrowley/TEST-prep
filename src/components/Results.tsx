@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function Results({ questions, result, onPracticeAgain, onHome }: Props) {
-  const { summary, xpBefore, xpEarned, newMedalIds } = result
+  const { summary, xpBefore, xpEarned, completionBonus, newMedalIds } = result
   const byId = new Map(questions.map((q) => [q.id, q]))
   const pct = summary.total > 0 ? Math.round((summary.correctCount / summary.total) * 100) : 0
   const missed = summary.points.filter((p) => !p.answer.correct)
@@ -32,11 +32,16 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
       </div>
 
       <div className="xp-gain-card">
-        <span className="xp-gain-amount">+{xpEarned.toLocaleString()} XP</span>
-        {rankedUp ? (
-          <span className="rank-up">RANK UP! Now {rankAfter.rank.name}</span>
-        ) : (
-          <span className="xp-gain-rank">{rankAfter.rank.name}</span>
+        <div className="xp-gain-top">
+          <span className="xp-gain-amount">+{xpEarned.toLocaleString()} XP</span>
+          {rankedUp ? (
+            <span className="rank-up">RANK UP! Now {rankAfter.rank.name}</span>
+          ) : (
+            <span className="xp-gain-rank">{rankAfter.rank.name}</span>
+          )}
+        </div>
+        {completionBonus > 0 && (
+          <span className="xp-gain-bonus">includes +{completionBonus} session complete bonus</span>
         )}
       </div>
 

@@ -634,6 +634,11 @@ button {
   border-radius: 16px;
   padding: 14px 16px;
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.xp-gain-top {
+  display: flex;
   justify-content: space-between;
   align-items: center;
 }
@@ -644,6 +649,10 @@ button {
 }
 .xp-gain-rank {
   font-size: 13px;
+  color: var(--text-muted);
+}
+.xp-gain-bonus {
+  font-size: 12px;
   color: var(--text-muted);
 }
 .rank-up {
