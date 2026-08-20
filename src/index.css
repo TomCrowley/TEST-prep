@@ -64,6 +64,11 @@ button {
   display: flex;
   flex-direction: column;
   padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  /* Without this, the browser's scroll-anchoring heuristic can silently
+     re-scroll the page to compensate for content changing above the fold
+     (new question card, starburst mount/unmount, HUD reflow) -- fighting
+     our own scroll-to-top reset on question change. */
+  overflow-anchor: none;
 }
 
 .screen {

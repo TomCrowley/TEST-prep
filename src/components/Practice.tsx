@@ -36,6 +36,11 @@ export default function Practice({
   const [selected, setSelected] = useState<number | null>(initialSelected)
   const [answers, setAnswers] = useState<SessionAnswer[]>(initialAnswers)
   const [burstOrigin, setBurstOrigin] = useState<{ x: number; y: number } | null>(null)
+  // XP is applied the instant a correct answer is chosen, but the HUD bar
+  // should only visibly update once the *next* question is on screen --
+  // otherwise the fill/glow plays while still looking at the feedback for
+  // the previous one, or gets scrolled past entirely.
+  const [displayedXp, setDisplayedXp] = useState(xp)
 
   const questionsById = useMemo(() => new Map(questions.map((q) => [q.id, q])), [questions])
   const summary = useMemo(() => computeSessionSummary(answers, questionsById), [answers, questionsById])
@@ -52,6 +57,14 @@ export default function Practice({
   useEffect(() => {
     onProgressChange(index, selected, answers)
   }, [index, selected, answers, onProgressChange])
+
+  // Reveal whatever XP has been earned so far exactly when a new question
+  // appears. Deliberately keyed on `index` alone -- `xp` changing on its
+  // own (right when an answer is chosen) must NOT trigger this.
+  useEffect(() => {
+    setDisplayedXp(xp)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index])
 
   // A swipe gesture can leave native momentum scrolling in flight, which
   // fights a single synchronous scrollTo. Re-assert the top position on
@@ -116,7 +129,7 @@ export default function Practice({
           </span>
         )}
         <div className="hud-xp">
-          <XpBar xp={xp} />
+          <XpBar xp={displayedXp} />
         </div>
       </div>
 
