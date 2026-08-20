@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ProgressMap, Section } from '../types'
 import { SECTION_TOTALS } from '../questionBank'
 import { MEDALS, getRankProgress } from '../game'
@@ -29,6 +30,7 @@ function sectionStats(progress: ProgressMap, section?: Section) {
 }
 
 export default function Home({ progress, profile, onStart, onReset, error }: Props) {
+  const [confirmingReset, setConfirmingReset] = useState(false)
   const overall = sectionStats(progress)
   const math = sectionStats(progress, 'math')
   const reading = sectionStats(progress, 'reading')
@@ -111,9 +113,33 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
       </div>
 
       {overall.answered > 0 && (
-        <button className="reset-link" onClick={onReset}>
+        <button className="reset-link" onClick={() => setConfirmingReset(true)}>
           Reset progress
         </button>
+      )}
+
+      {confirmingReset && (
+        <div className="modal-overlay" onClick={() => setConfirmingReset(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <p className="modal-message">
+              Are you sure you want to reset your progress? This cannot be undone.
+            </p>
+            <div className="modal-actions">
+              <button
+                className="modal-button modal-button-danger"
+                onClick={() => {
+                  onReset()
+                  setConfirmingReset(false)
+                }}
+              >
+                Reset
+              </button>
+              <button className="modal-button modal-button-cancel" onClick={() => setConfirmingReset(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
