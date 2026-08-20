@@ -136,7 +136,7 @@ button {
   flex-shrink: 0;
 }
 .xp-bar {
-  height: 12px;
+  height: 20px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -145,7 +145,24 @@ button {
 .xp-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--gold), var(--gold-2));
-  transition: width 0.3s ease;
+  background-size: 200% 100%;
+  transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 0 6px rgba(255, 151, 44, 0.5));
+  animation: xp-bar-sheen 3s linear infinite;
+}
+@keyframes xp-bar-sheen {
+  0% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Compact live XP bar shown in the practice HUD */
+.hud-xp {
+  flex: 1 1 100%;
+  order: 3;
 }
 .rank-next {
   display: flex;
@@ -361,8 +378,12 @@ button {
 
 .hud-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+.hud-xp .xp-bar {
+  height: 14px;
 }
 .hud-score {
   font-size: 14px;
@@ -559,9 +580,84 @@ button {
 }
 .feedback.good {
   background: var(--good-bg);
+  animation: feedback-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .feedback.bad {
   background: var(--bad-bg);
+}
+@keyframes feedback-pop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Starburst: fires once per correct answer for a bit of extra dopamine */
+.starburst {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 60;
+}
+.starburst-flash {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, var(--gold) 35%, var(--accent) 65%, transparent 75%);
+  animation: starburst-flash 0.7s ease-out forwards;
+}
+.starburst-ray {
+  position: absolute;
+  width: 5px;
+  height: 60px;
+  background: linear-gradient(to top, transparent, var(--gold) 40%, #fff);
+  border-radius: 999px;
+  transform-origin: center bottom;
+  animation: starburst-ray 0.8s cubic-bezier(0.15, 0.8, 0.3, 1) forwards;
+}
+@keyframes starburst-flash {
+  0% {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(7);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(11);
+    opacity: 0;
+  }
+}
+@keyframes starburst-ray {
+  0% {
+    transform: rotate(var(--angle, 0)) translateY(-6px) scaleY(0.2);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--angle, 0)) translateY(-150px) scaleY(1);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .starburst,
+  .score-card,
+  .feedback.good,
+  .score-pct.settled {
+    animation: none !important;
+  }
+  .xp-bar-fill {
+    animation: none !important;
+    transition: width 0.15s linear;
+  }
 }
 .feedback-title {
   font-weight: 700;
@@ -620,9 +716,59 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  position: relative;
+  overflow: hidden;
+  animation: score-card-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2);
   box-shadow: var(--shadow);
 }
+.score-card::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(255, 151, 44, 0.25) 0%, transparent 65%);
+  animation: score-glow-pulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes score-card-in {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes score-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@keyframes score-pct-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .score-label {
+  position: relative;
+  z-index: 1;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -630,6 +776,8 @@ button {
   color: var(--text-muted);
 }
 .score-pct {
+  position: relative;
+  z-index: 1;
   font-size: 48px;
   font-weight: 700;
   color: var(--gold);
@@ -638,7 +786,12 @@ button {
     0 0 16px rgba(255, 151, 44, 0.45),
     0 0 32px rgba(255, 151, 44, 0.25);
 }
+.score-pct.settled {
+  animation: score-pct-pop 0.4s ease;
+}
 .score-detail {
+  position: relative;
+  z-index: 1;
   color: var(--text-muted);
   font-size: 14px;
   margin-top: 2px;

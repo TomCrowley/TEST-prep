@@ -2,6 +2,7 @@ import type { Question } from '../types'
 import type { SessionResult } from '../game'
 import { MEDALS, getRankProgress } from '../game'
 import { useSwipeLeft } from '../useSwipeLeft'
+import { useCountUp } from '../useCountUp'
 
 interface Props {
   questions: Question[]
@@ -22,12 +23,13 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
   const rankedUp = rankAfter.index > rankBefore.index
 
   const swipeHandlers = useSwipeLeft(true, onHome)
+  const { value: animatedScore, done: scoreSettled } = useCountUp(summary.score)
 
   return (
     <div className="screen results" {...swipeHandlers}>
       <div className="score-card">
         <span className="score-label">Battle Score</span>
-        <span className="score-pct">{summary.score.toLocaleString()}</span>
+        <span className={`score-pct${scoreSettled ? ' settled' : ''}`}>{animatedScore.toLocaleString()}</span>
         <span className="score-detail">
           {summary.correctCount} of {summary.total} correct ({pct}%)
           {summary.maxStreak >= 2 ? ` · best streak ${summary.maxStreak}` : ''}

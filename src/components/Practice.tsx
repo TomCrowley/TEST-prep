@@ -1,10 +1,12 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
-import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
+import { computeSessionSummary, getRankProgress, getStreakTier, pointsForCorrectAnswer } from '../game'
 import { useSwipeLeft } from '../useSwipeLeft'
+import Starburst from './Starburst'
 
 interface Props {
   questions: Question[]
+  xp: number
   initialIndex?: number
   initialSelected?: number | null
   initialAnswers?: SessionAnswer[]
@@ -19,6 +21,7 @@ const DIFFICULTY_LABEL: Record<string, string> = { E: 'Easy', M: 'Medium', H: 'H
 
 export default function Practice({
   questions,
+  xp,
   initialIndex = 0,
   initialSelected = null,
   initialAnswers = [],
@@ -37,6 +40,10 @@ export default function Practice({
   const lastPoint = summary.points[summary.points.length - 1] ?? null
   const currentStreak = lastPoint?.streakAfter ?? 0
   const currentTier = getStreakTier(currentStreak)
+  const rankProgress = getRankProgress(xp)
+  const rankPct = rankProgress.xpForNextRank
+    ? Math.min(100, Math.round((rankProgress.xpIntoRank / rankProgress.xpForNextRank) * 100))
+    : 100
 
   const question = questions[index]
   const isLast = index === questions.length - 1
@@ -109,6 +116,11 @@ export default function Practice({
             {currentTier.label ? ` · ${currentTier.label}` : ''}
           </span>
         )}
+        <div className="hud-xp">
+          <div className="xp-bar">
+            <div className="xp-bar-fill" style={{ width: `${rankPct}%` }} />
+          </div>
+        </div>
       </div>
 
       <div className="question-card">
@@ -146,6 +158,8 @@ export default function Practice({
             )
           })}
         </div>
+
+        {hasAnswered && selected === question.correctIndex && <Starburst key={question.id} />}
 
         {hasAnswered && (
           <div className={`feedback ${selected === question.correctIndex ? 'good' : 'bad'}`}>

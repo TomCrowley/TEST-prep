@@ -129,6 +129,7 @@ function App() {
       {screen === 'practice' && (
         <Practice
           questions={sessionQuestions}
+          xp={profile.xp}
           initialIndex={resumedPractice?.index}
           initialSelected={resumedPractice?.selected}
           initialAnswers={resumedPractice?.answers}
