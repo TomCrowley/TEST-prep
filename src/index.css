@@ -11,6 +11,8 @@
   --good-bg: rgba(74, 222, 128, 0.12);
   --bad: #f87171;
   --bad-bg: rgba(248, 113, 113, 0.12);
+  --gold: #fbbf24;
+  --gold-bg: rgba(251, 191, 36, 0.12);
   --shadow: rgba(0, 0, 0, 0.4) 0 4px 16px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -81,6 +83,74 @@ button {
   color: var(--text-muted);
   margin-top: 6px;
   font-size: 15px;
+}
+
+.rank-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow);
+}
+.rank-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.rank-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.rank-xp {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.xp-bar {
+  height: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  transition: width 0.3s ease;
+}
+.rank-next {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.medal-case {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px;
+}
+.medal {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+.medal.earned {
+  background: var(--gold-bg);
+  border-color: var(--gold);
+}
+.medal.locked {
+  filter: grayscale(1);
+  opacity: 0.35;
 }
 
 .stats-card {
@@ -226,6 +296,25 @@ button {
   color: var(--text-muted);
   min-width: 36px;
   text-align: right;
+}
+
+.hud-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.hud-score {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.hud-streak {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bad);
+  background: var(--bad-bg);
+  border-radius: 999px;
+  padding: 3px 10px;
 }
 
 .question-card {
@@ -455,14 +544,75 @@ button {
   gap: 4px;
   box-shadow: var(--shadow);
 }
+.score-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
 .score-pct {
   font-size: 48px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--gold);
 }
 .score-detail {
   color: var(--text-muted);
   font-size: 14px;
+}
+
+.xp-gain-card {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.xp-gain-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.xp-gain-rank {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.rank-up {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.medals-earned h2 {
+  margin-bottom: 8px;
+}
+.medals-earned-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.medal-earned-item {
+  background: var(--gold-bg);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.medal-earned-item .medal-icon {
+  font-size: 28px;
+}
+.medal-earned-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-h);
+}
+.medal-earned-desc {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .review-list {

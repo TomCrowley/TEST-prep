@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
+import { computeSessionSummary, getStreakTier } from '../game'
 
 interface Props {
   questions: Question[]
   onAnswer: (questionId: string, section: Section, correct: boolean) => void
-  onFinish: (answers: SessionAnswer[]) => void
+  onFinish: (answers: SessionAnswer[], questionsById: Map<string, Question>) => void
   onExit: () => void
 }
 
@@ -14,6 +15,12 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [answers, setAnswers] = useState<SessionAnswer[]>([])
+
+  const questionsById = useMemo(() => new Map(questions.map((q) => [q.id, q])), [questions])
+  const summary = useMemo(() => computeSessionSummary(answers, questionsById), [answers, questionsById])
+  const lastPoint = summary.points[summary.points.length - 1] ?? null
+  const currentStreak = lastPoint?.streakAfter ?? 0
+  const currentTier = getStreakTier(currentStreak)
 
   const question = questions[index]
   const isLast = index === questions.length - 1
@@ -29,7 +36,7 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
 
   function next() {
     if (isLast) {
-      onFinish(answers)
+      onFinish(answers, questionsById)
       return
     }
     setIndex((i) => i + 1)
@@ -48,6 +55,16 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
         <span className="progress-count">
           {index + 1}/{questions.length}
         </span>
+      </div>
+
+      <div className="hud-row">
+        <span className="hud-score">⭐ {summary.score.toLocaleString()}</span>
+        {currentStreak >= 2 && (
+          <span className="hud-streak">
+            🔥 {currentStreak}
+            {currentTier.label ? ` · ${currentTier.label}` : ''}
+          </span>
+        )}
       </div>
 
       <div className="question-card">
@@ -89,7 +106,14 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
         {hasAnswered && (
           <div className={`feedback ${selected === question.correctIndex ? 'good' : 'bad'}`}>
             <p className="feedback-title">
-              {selected === question.correctIndex ? 'Correct' : 'Not quite'}
+              {selected === question.correctIndex ? (
+                <>
+                  Correct — +{lastPoint?.points ?? 0}
+                  {currentTier.label ? ` · ${currentTier.label}!` : ''}
+                </>
+              ) : (
+                'Not quite'
+              )}
             </p>
             <div
               className="feedback-explanation"

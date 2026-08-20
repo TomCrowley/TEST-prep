@@ -1,8 +1,11 @@
 import type { ProgressMap, Section } from '../types'
 import { SECTION_TOTALS } from '../questionBank'
+import { MEDALS, getRankProgress } from '../game'
+import type { Profile } from '../useProfile'
 
 interface Props {
   progress: ProgressMap
+  profile: Profile
   onStart: (section: Section | 'all') => void
   onReset: () => void
   error?: string | null
@@ -25,10 +28,14 @@ function sectionStats(progress: ProgressMap, section?: Section) {
   return { answered, total, accuracy }
 }
 
-export default function Home({ progress, onStart, onReset, error }: Props) {
+export default function Home({ progress, profile, onStart, onReset, error }: Props) {
   const overall = sectionStats(progress)
   const math = sectionStats(progress, 'math')
   const reading = sectionStats(progress, 'reading')
+  const rankProgress = getRankProgress(profile.xp)
+  const rankPct = rankProgress.xpForNextRank
+    ? Math.min(100, Math.round((rankProgress.xpIntoRank / rankProgress.xpForNextRank) * 100))
+    : 100
 
   return (
     <div className="screen home">
@@ -38,6 +45,32 @@ export default function Home({ progress, onStart, onReset, error }: Props) {
       </header>
 
       {error && <p className="error-message">{error}</p>}
+
+      <div className="rank-card">
+        <div className="rank-top">
+          <span className="rank-name">{rankProgress.rank.name}</span>
+          <span className="rank-xp">{profile.xp.toLocaleString()} XP</span>
+        </div>
+        <div className="xp-bar">
+          <div className="xp-bar-fill" style={{ width: `${rankPct}%` }} />
+        </div>
+        <span className="rank-next">
+          {rankProgress.nextRank
+            ? `${(rankProgress.xpForNextRank! - rankProgress.xpIntoRank).toLocaleString()} XP to ${rankProgress.nextRank.name}`
+            : 'Max rank reached'}
+        </span>
+      </div>
+
+      <div className="medal-case">
+        {MEDALS.map((medal) => {
+          const earned = profile.medals.includes(medal.id)
+          return (
+            <div key={medal.id} className={`medal ${earned ? 'earned' : 'locked'}`} title={`${medal.name} — ${medal.description}`}>
+              <span className="medal-icon">{medal.icon}</span>
+            </div>
+          )
+        })}
+      </div>
 
       <div className="stats-card">
         <div className="stats-row">
