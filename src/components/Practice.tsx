@@ -1,19 +1,20 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
-import { computeSessionSummary, getStreakTier } from '../game'
+import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
 
-const SWIPE_THRESHOLD = 60
+const SWIPE_THRESHOLD = 40
 
 interface Props {
   questions: Question[]
   onAnswer: (questionId: string, section: Section, correct: boolean) => void
+  onXpEarned: (points: number) => void
   onFinish: (answers: SessionAnswer[], questionsById: Map<string, Question>) => void
   onExit: () => void
 }
 
 const DIFFICULTY_LABEL: Record<string, string> = { E: 'Easy', M: 'Medium', H: 'Hard' }
 
-export default function Practice({ questions, onAnswer, onFinish, onExit }: Props) {
+export default function Practice({ questions, onAnswer, onXpEarned, onFinish, onExit }: Props) {
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [answers, setAnswers] = useState<SessionAnswer[]>([])
@@ -74,6 +75,9 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
     setSelected(choiceIndex)
     onAnswer(question.id, question.section, correct)
     setAnswers((prev) => [...prev, { questionId: question.id, chosenIndex: choiceIndex, correct }])
+    if (correct) {
+      onXpEarned(pointsForCorrectAnswer(currentStreak + 1, question.difficulty))
+    }
   }
 
   function next() {

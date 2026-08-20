@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { loadQuestions } from './questionBank'
 import { shuffle } from './shuffle'
 import { useProgress } from './useProgress'
@@ -22,12 +22,16 @@ function pickSession(pool: Question[], progress: ReturnType<typeof useProgress>[
 
 function App() {
   const { progress, recordAnswer, resetProgress } = useProgress()
-  const { profile, applySessionRewards, resetProfile } = useProfile()
+  const { profile, addXp, awardMedals, resetProfile } = useProfile()
   const [screen, setScreen] = useState<Screen>('home')
   const [section, setSection] = useState<Section | 'all'>('all')
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>([])
   const [sessionResult, setSessionResult] = useState<SessionResult | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
+  // XP is awarded live per-answer (so leaving a session early keeps what
+  // was earned); this just remembers where XP stood when the session
+  // started, so the after-action report can show the gain and any rank-up.
+  const sessionStartXp = useRef(0)
 
   async function startSession(chosenSection: Section | 'all') {
     setSection(chosenSection)
@@ -37,6 +41,7 @@ function App() {
       const pool = await loadQuestions(chosenSection)
       setSessionQuestions(pickSession(pool, progress))
       setSessionResult(null)
+      sessionStartXp.current = profile.xp
       setScreen('practice')
     } catch {
       setLoadError('Could not load questions. Check your connection and try again.')
@@ -48,9 +53,8 @@ function App() {
     const summary = computeSessionSummary(answers, questionsById)
     const lifetimeAttempts = Object.values(progress).reduce((sum, s) => sum + s.attempts, 0)
     const newMedalIds = evaluateNewMedals(summary, lifetimeAttempts, new Set(profile.medals))
-    const xpBefore = profile.xp
-    applySessionRewards(summary.score, newMedalIds)
-    setSessionResult({ summary, xpBefore, xpEarned: summary.score, newMedalIds })
+    awardMedals(newMedalIds)
+    setSessionResult({ summary, xpBefore: sessionStartXp.current, xpEarned: summary.score, newMedalIds })
     setScreen('results')
   }
 
@@ -74,6 +78,7 @@ function App() {
         <Practice
           questions={sessionQuestions}
           onAnswer={recordAnswer}
+          onXpEarned={addXp}
           onFinish={finishSession}
           onExit={() => setScreen('home')}
         />
