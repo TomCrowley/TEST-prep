@@ -57,13 +57,16 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
         <div className="xp-bar">
           <div className="xp-bar-fill" style={{ width: `${rankPct}%` }} />
         </div>
-        <span className="rank-next">
-          {rankProgress.nextRank
-            ? `${(rankProgress.xpForNextRank! - rankProgress.xpIntoRank).toLocaleString()} XP to ${rankProgress.nextRank.name}`
-            : 'Max rank reached'}
-          {' · '}
-          {overall.answered}/{overall.total} seen
-        </span>
+        <div className="rank-next">
+          <span>
+            {rankProgress.nextRank
+              ? `${(rankProgress.xpForNextRank! - rankProgress.xpIntoRank).toLocaleString()} XP to ${rankProgress.nextRank.name}`
+              : 'Max rank reached'}
+          </span>
+          <span className="rank-seen">
+            {overall.answered}/{overall.total} seen
+          </span>
+        </div>
       </div>
 
       <div className="medal-case">
