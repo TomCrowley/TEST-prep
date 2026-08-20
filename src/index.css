@@ -615,11 +615,11 @@ button {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 28px;
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   box-shadow: var(--shadow);
 }
 .score-label {
@@ -633,10 +633,15 @@ button {
   font-size: 48px;
   font-weight: 700;
   color: var(--gold);
+  text-shadow:
+    0 0 3px rgba(255, 151, 44, 0.6),
+    0 0 16px rgba(255, 151, 44, 0.45),
+    0 0 32px rgba(255, 151, 44, 0.25);
 }
 .score-detail {
   color: var(--text-muted);
   font-size: 14px;
+  margin-top: 2px;
 }
 
 .xp-gain-card {
