@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier } from '../game'
 
@@ -28,6 +28,23 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
   const isLast = index === questions.length - 1
   const hasAnswered = selected !== null
 
+  // A swipe gesture can leave native momentum scrolling in flight, which
+  // fights a single synchronous scrollTo. Re-assert the top position on
+  // the next couple of frames (and once more after momentum should have
+  // settled) so the progress bar and streak HUD are always visible.
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+    const raf1 = requestAnimationFrame(() => {
+      window.scrollTo(0, 0)
+      requestAnimationFrame(() => window.scrollTo(0, 0))
+    })
+    const timeout = setTimeout(() => window.scrollTo(0, 0), 300)
+    return () => {
+      cancelAnimationFrame(raf1)
+      clearTimeout(timeout)
+    }
+  }, [index])
+
   const touchStart = useRef<{ x: number; y: number } | null>(null)
 
   function handleTouchStart(e: React.TouchEvent) {
@@ -56,7 +73,6 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
   }
 
   function next() {
-    window.scrollTo(0, 0)
     if (isLast) {
       onFinish(answers, questionsById)
       return
