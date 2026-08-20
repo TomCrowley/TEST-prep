@@ -3,6 +3,9 @@ import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
 
 const SWIPE_THRESHOLD = 40
+// How far the page can scroll during a touch before we treat it as a
+// deliberate scroll (reading a long explanation) instead of swipe drift.
+const SCROLL_CANCEL_THRESHOLD = 120
 
 interface Props {
   questions: Question[]
@@ -57,10 +60,11 @@ export default function Practice({ questions, onAnswer, onXpEarned, onFinish, on
     const start = touchStart.current
     touchStart.current = null
     if (!hasAnswered || !start) return
-    // If the page actually scrolled during this touch, it was a scroll
-    // gesture (likely reading a long explanation), not a swipe — bail out
-    // even if the raw start/end delta looks horizontal-ish.
-    if (Math.abs(window.scrollY - start.scrollY) > 10) return
+    // A real horizontal swipe often nudges the page a little too (the
+    // browser scrolls in parallel with our gesture tracking) — only bail
+    // out for a scroll distance big enough to mean "reading a long
+    // explanation," not incidental drift from an intentional swipe.
+    if (Math.abs(window.scrollY - start.scrollY) > SCROLL_CANCEL_THRESHOLD) return
     const t = e.changedTouches[0]
     const dx = t.clientX - start.x
     const dy = t.clientY - start.y
