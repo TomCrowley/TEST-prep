@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
-// How far (px) the finger has to move before we commit to an axis. Once
-// committed, later movement on the other axis is ignored for the rest of
-// this gesture -- wobble during a horizontal swipe no longer cancels it,
-// and a horizontal wobble during a vertical scroll doesn't hijack it.
+// How far (px) a single move needs to be, and how much more horizontal
+// than vertical, before we commit to treating this gesture as a swipe.
 const AXIS_LOCK_THRESHOLD = 8
 // Deliberately short: a small, quick flick should register.
 const SWIPE_THRESHOLD = 60
@@ -17,7 +15,13 @@ interface TouchState {
   startX: number
   startY: number
   startScrollY: number
-  axis: 'horizontal' | 'vertical' | null
+  // Once true, stays true for the rest of the gesture (wobble afterward
+  // doesn't cancel it). Unlike locking to 'vertical', staying false is
+  // never a permanent decision -- a tall, scrollable card means the
+  // opening movement is more likely to be vertical-ish by chance, so we
+  // keep re-checking every move rather than giving up on the swipe after
+  // the first ambiguous one.
+  horizontal: boolean
 }
 
 export function useSwipeCard<T extends HTMLElement>(enabled: boolean, onSwipe: () => void) {
@@ -44,17 +48,17 @@ export function useSwipeCard<T extends HTMLElement>(enabled: boolean, onSwipe: (
       const dx = t.clientX - state.startX
       const dy = t.clientY - state.startY
 
-      if (!state.axis) {
-        if (Math.abs(dx) < AXIS_LOCK_THRESHOLD && Math.abs(dy) < AXIS_LOCK_THRESHOLD) return
-        state.axis = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical'
+      if (!state.horizontal) {
+        if (Math.abs(dx) > AXIS_LOCK_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+          state.horizontal = true
+        } else {
+          return // still ambiguous (or currently more vertical) -- let the page scroll, keep watching
+        }
       }
 
-      if (state.axis === 'horizontal') {
-        e.preventDefault()
-        setTransitionMs(0)
-        setDragX(dx)
-      }
-      // Locked vertical: let the browser scroll normally, ignore dx entirely.
+      e.preventDefault()
+      setTransitionMs(0)
+      setDragX(dx)
     }
 
     function stopTracking() {
@@ -68,7 +72,7 @@ export function useSwipeCard<T extends HTMLElement>(enabled: boolean, onSwipe: (
       touch.current = null
       stopTracking()
 
-      if (!state || state.axis !== 'horizontal') {
+      if (!state || !state.horizontal) {
         setDragX(0)
         return
       }
@@ -95,7 +99,7 @@ export function useSwipeCard<T extends HTMLElement>(enabled: boolean, onSwipe: (
     function handleStart(e: TouchEvent) {
       if (!enabledRef.current) return
       const t = e.touches[0]
-      touch.current = { startX: t.clientX, startY: t.clientY, startScrollY: window.scrollY, axis: null }
+      touch.current = { startX: t.clientX, startY: t.clientY, startScrollY: window.scrollY, horizontal: false }
       setTransitionMs(0)
       window.addEventListener('touchmove', handleMove, { passive: false })
       window.addEventListener('touchend', handleEnd)

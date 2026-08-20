@@ -178,10 +178,6 @@ export default function Practice({
           })}
         </div>
 
-        {hasAnswered && selected === question.correctIndex && (
-          <Starburst key={question.id} origin={burstOrigin ?? undefined} />
-        )}
-
         {hasAnswered && (
           <div className={`feedback ${selected === question.correctIndex ? 'good' : 'bad'}`}>
             <p className="feedback-title">
@@ -201,6 +197,10 @@ export default function Practice({
           </div>
         )}
       </div>
+
+      {hasAnswered && selected === question.correctIndex && (
+        <Starburst key={question.id} origin={burstOrigin ?? undefined} />
+      )}
 
       {hasAnswered && (
         <>
