@@ -32,15 +32,18 @@ export default function Results({ questions, answers, onPracticeAgain, onHome }:
             return (
               <div className="review-item" key={a.questionId}>
                 <span className="skill-tag">{q.skill}</span>
-                {q.passage && <p className="passage">{q.passage}</p>}
-                <p className="prompt">{q.prompt}</p>
-                <p className="review-answer wrong">
-                  Your answer: {q.choices[a.chosenIndex]}
-                </p>
-                <p className="review-answer right">
-                  Correct answer: {q.choices[q.correctIndex]}
-                </p>
-                <p className="feedback-explanation">{q.explanation}</p>
+                {q.passageHtml && (
+                  <div className="passage" dangerouslySetInnerHTML={{ __html: q.passageHtml }} />
+                )}
+                <div className="prompt" dangerouslySetInnerHTML={{ __html: q.promptHtml }} />
+                <p className="review-answer wrong">Your answer:</p>
+                <div className="choice-body" dangerouslySetInnerHTML={{ __html: q.choices[a.chosenIndex] }} />
+                <p className="review-answer right">Correct answer:</p>
+                <div className="choice-body" dangerouslySetInnerHTML={{ __html: q.choices[q.correctIndex] }} />
+                <div
+                  className="feedback-explanation"
+                  dangerouslySetInnerHTML={{ __html: q.explanationHtml }}
+                />
               </div>
             )
           })}

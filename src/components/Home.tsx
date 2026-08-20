@@ -1,32 +1,34 @@
-import type { ProgressMap, Question, Section } from '../types'
+import type { ProgressMap, Section } from '../types'
+import { SECTION_TOTALS } from '../questionBank'
 
 interface Props {
-  questions: Question[]
   progress: ProgressMap
   onStart: (section: Section | 'all') => void
   onReset: () => void
+  error?: string | null
 }
 
-function sectionStats(questions: Question[], progress: ProgressMap, section?: Section) {
-  const scoped = section ? questions.filter((q) => q.section === section) : questions
+function sectionStats(progress: ProgressMap, section?: Section) {
   let attempts = 0
   let correct = 0
   let answered = 0
-  for (const q of scoped) {
-    const stat = progress[q.id]
-    if (!stat) continue
+  const total = section ? SECTION_TOTALS[section] : SECTION_TOTALS.math + SECTION_TOTALS.reading
+
+  for (const stat of Object.values(progress)) {
+    if (section && stat.section !== section) continue
     answered += 1
     attempts += stat.attempts
     correct += stat.correct
   }
+
   const accuracy = attempts > 0 ? Math.round((correct / attempts) * 100) : null
-  return { answered, total: scoped.length, accuracy }
+  return { answered, total, accuracy }
 }
 
-export default function Home({ questions, progress, onStart, onReset }: Props) {
-  const overall = sectionStats(questions, progress)
-  const math = sectionStats(questions, progress, 'math')
-  const reading = sectionStats(questions, progress, 'reading')
+export default function Home({ progress, onStart, onReset, error }: Props) {
+  const overall = sectionStats(progress)
+  const math = sectionStats(progress, 'math')
+  const reading = sectionStats(progress, 'reading')
 
   return (
     <div className="screen home">
@@ -34,6 +36,8 @@ export default function Home({ questions, progress, onStart, onReset }: Props) {
         <h1>SAT Prep</h1>
         <p className="subtitle">Bite-sized practice for Math and Reading &amp; Writing.</p>
       </header>
+
+      {error && <p className="error-message">{error}</p>}
 
       <div className="stats-card">
         <div className="stats-row">

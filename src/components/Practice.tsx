@@ -1,12 +1,14 @@
 import { useState } from 'react'
-import type { Question, SessionAnswer } from '../types'
+import type { Question, Section, SessionAnswer } from '../types'
 
 interface Props {
   questions: Question[]
-  onAnswer: (questionId: string, correct: boolean) => void
+  onAnswer: (questionId: string, section: Section, correct: boolean) => void
   onFinish: (answers: SessionAnswer[]) => void
   onExit: () => void
 }
+
+const DIFFICULTY_LABEL: Record<string, string> = { E: 'Easy', M: 'Medium', H: 'Hard' }
 
 export default function Practice({ questions, onAnswer, onFinish, onExit }: Props) {
   const [index, setIndex] = useState(0)
@@ -21,7 +23,7 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
     if (hasAnswered) return
     const correct = choiceIndex === question.correctIndex
     setSelected(choiceIndex)
-    onAnswer(question.id, correct)
+    onAnswer(question.id, question.section, correct)
     setAnswers((prev) => [...prev, { questionId: question.id, chosenIndex: choiceIndex, correct }])
   }
 
@@ -49,9 +51,19 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
       </div>
 
       <div className="question-card">
-        <span className="skill-tag">{question.skill}</span>
-        {question.passage && <p className="passage">{question.passage}</p>}
-        <p className="prompt">{question.prompt}</p>
+        <div className="tag-row">
+          <span className="skill-tag">{question.skill}</span>
+          {question.difficulty && (
+            <span className={`difficulty-tag difficulty-${question.difficulty}`}>
+              {DIFFICULTY_LABEL[question.difficulty] ?? question.difficulty}
+            </span>
+          )}
+        </div>
+
+        {question.passageHtml && (
+          <div className="passage" dangerouslySetInnerHTML={{ __html: question.passageHtml }} />
+        )}
+        <div className="prompt" dangerouslySetInnerHTML={{ __html: question.promptHtml }} />
 
         <div className="choices">
           {question.choices.map((choice, i) => {
@@ -68,7 +80,7 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
                 disabled={hasAnswered}
               >
                 <span className="choice-letter">{String.fromCharCode(65 + i)}</span>
-                <span>{choice}</span>
+                <span className="choice-body" dangerouslySetInnerHTML={{ __html: choice }} />
               </button>
             )
           })}
@@ -79,7 +91,10 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
             <p className="feedback-title">
               {selected === question.correctIndex ? 'Correct' : 'Not quite'}
             </p>
-            <p className="feedback-explanation">{question.explanation}</p>
+            <div
+              className="feedback-explanation"
+              dangerouslySetInnerHTML={{ __html: question.explanationHtml }}
+            />
           </div>
         )}
       </div>
