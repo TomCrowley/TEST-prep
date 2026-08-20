@@ -45,21 +45,25 @@ export default function Practice({ questions, onAnswer, onFinish, onExit }: Prop
     }
   }, [index])
 
-  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const touchStart = useRef<{ x: number; y: number; scrollY: number } | null>(null)
 
   function handleTouchStart(e: React.TouchEvent) {
     const t = e.touches[0]
-    touchStart.current = { x: t.clientX, y: t.clientY }
+    touchStart.current = { x: t.clientX, y: t.clientY, scrollY: window.scrollY }
   }
 
   function handleTouchEnd(e: React.TouchEvent) {
     const start = touchStart.current
     touchStart.current = null
     if (!hasAnswered || !start) return
+    // If the page actually scrolled during this touch, it was a scroll
+    // gesture (likely reading a long explanation), not a swipe — bail out
+    // even if the raw start/end delta looks horizontal-ish.
+    if (Math.abs(window.scrollY - start.scrollY) > 10) return
     const t = e.changedTouches[0]
     const dx = t.clientX - start.x
     const dy = t.clientY - start.y
-    if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 2) {
       next()
     }
   }
