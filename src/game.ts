@@ -13,14 +13,14 @@ export interface StreakTier {
 // Labels escalate like a Quake arena-shooter kill streak announcer.
 export const STREAK_TIERS: StreakTier[] = [
   { min: 0, multiplier: 1, label: null },
-  { min: 3, multiplier: 1.15, label: 'Double Kill' },
-  { min: 4, multiplier: 1.3, label: 'Multi Kill' },
-  { min: 5, multiplier: 1.5, label: 'Ultra Kill' },
-  { min: 6, multiplier: 1.65, label: 'Monster Kill' },
-  { min: 7, multiplier: 1.8, label: 'Killing Spree' },
-  { min: 8, multiplier: 2, label: 'Rampage' },
-  { min: 9, multiplier: 2.25, label: 'Dominating' },
-  { min: 10, multiplier: 2.5, label: 'Unstoppable' },
+  { min: 2, multiplier: 1.15, label: 'Double Kill' },
+  { min: 3, multiplier: 1.3, label: 'Multi Kill' },
+  { min: 4, multiplier: 1.5, label: 'Ultra Kill' },
+  { min: 5, multiplier: 1.65, label: 'Monster Kill' },
+  { min: 6, multiplier: 1.8, label: 'Killing Spree' },
+  { min: 7, multiplier: 2, label: 'Rampage' },
+  { min: 8, multiplier: 2.25, label: 'Dominating' },
+  { min: 9, multiplier: 2.5, label: 'Unstoppable' },
 ]
 
 export function getStreakTier(streak: number): StreakTier {

@@ -375,7 +375,7 @@ button {
 
 .passage {
   font-size: 15px;
-  color: var(--text-muted);
+  color: var(--text);
   font-style: italic;
   line-height: 1.5;
   border-left: 3px solid var(--border);
