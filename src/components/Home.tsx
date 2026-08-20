@@ -106,7 +106,7 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
           </span>
         </button>
 
-        <button className="section-card mixed" onClick={() => onStart('all')}>
+        <button className="section-card" onClick={() => onStart('all')}>
           <div className="section-card-top">
             <span className="section-name">Mixed practice</span>
             <span className="section-badge">{overall.accuracy === null ? '—' : `${overall.accuracy}%`}</span>

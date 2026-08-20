@@ -197,10 +197,6 @@ button {
 .section-card:active {
   transform: scale(0.98);
 }
-.section-card.mixed {
-  border-color: var(--accent);
-  background: var(--accent-bg);
-}
 .section-card-top {
   display: flex;
   justify-content: space-between;
