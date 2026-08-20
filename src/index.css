@@ -79,6 +79,14 @@ button {
   font-size: 32px;
   letter-spacing: -0.5px;
 }
+.home .tagline {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
 .home .subtitle {
   color: var(--text-muted);
   margin-top: 6px;

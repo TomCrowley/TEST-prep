@@ -40,8 +40,9 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
   return (
     <div className="screen home">
       <header className="hero">
-        <h1>SAT Prep</h1>
-        <p className="subtitle">Bite-sized practice for Math and Reading &amp; Writing.</p>
+        <h1>BattlePrep II</h1>
+        <p className="tagline">Campus Invasion Edition</p>
+        <p className="subtitle">SAT Math and Reading &amp; Writing, gamified.</p>
       </header>
 
       {error && <p className="error-message">{error}</p>}
