@@ -1,8 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
-import { computeSessionSummary, getRankProgress, getStreakTier, pointsForCorrectAnswer } from '../game'
+import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
 import { useSwipeLeft } from '../useSwipeLeft'
 import Starburst from './Starburst'
+import XpBar from './XpBar'
 
 interface Props {
   questions: Question[]
@@ -40,10 +41,6 @@ export default function Practice({
   const lastPoint = summary.points[summary.points.length - 1] ?? null
   const currentStreak = lastPoint?.streakAfter ?? 0
   const currentTier = getStreakTier(currentStreak)
-  const rankProgress = getRankProgress(xp)
-  const rankPct = rankProgress.xpForNextRank
-    ? Math.min(100, Math.round((rankProgress.xpIntoRank / rankProgress.xpForNextRank) * 100))
-    : 100
 
   const question = questions[index]
   const isLast = index === questions.length - 1
@@ -117,9 +114,7 @@ export default function Practice({
           </span>
         )}
         <div className="hud-xp">
-          <div className="xp-bar">
-            <div className="xp-bar-fill" style={{ width: `${rankPct}%` }} />
-          </div>
+          <XpBar xp={xp} />
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import type { ProgressMap, Section } from '../types'
 import { SECTION_TOTALS } from '../questionBank'
 import { MEDALS, getRankProgress } from '../game'
 import type { Profile } from '../useProfile'
+import XpBar from './XpBar'
 
 interface Props {
   progress: ProgressMap
@@ -35,9 +36,6 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
   const math = sectionStats(progress, 'math')
   const reading = sectionStats(progress, 'reading')
   const rankProgress = getRankProgress(profile.xp)
-  const rankPct = rankProgress.xpForNextRank
-    ? Math.min(100, Math.round((rankProgress.xpIntoRank / rankProgress.xpForNextRank) * 100))
-    : 100
 
   return (
     <div className="screen home">
@@ -56,9 +54,7 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
           </span>
           <span className="rank-accuracy">{overall.accuracy === null ? '—' : `${overall.accuracy}% acc`}</span>
         </div>
-        <div className="xp-bar">
-          <div className="xp-bar-fill" style={{ width: `${rankPct}%` }} />
-        </div>
+        <XpBar xp={profile.xp} />
         <div className="rank-next">
           <span>
             {rankProgress.nextRank
