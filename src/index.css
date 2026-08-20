@@ -461,6 +461,17 @@ button {
 .feedback-explanation math {
   font-size: 1em;
 }
+.prompt svg,
+.choice-body svg,
+.passage svg,
+.feedback-explanation svg {
+  max-width: 100%;
+  height: auto;
+  /* These charts are hand-authored black line art on a transparent
+     background (built for a light page) — invert + hue-rotate flips them
+     to read on our dark theme without distorting any real color use. */
+  filter: invert(0.92) hue-rotate(180deg);
+}
 .prompt table,
 .feedback-explanation table {
   border-collapse: collapse;
