@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
-import { useSwipeLeft } from '../useSwipeLeft'
+import { useSwipeCard } from '../useSwipeCard'
 import Starburst from './Starburst'
 import XpBar from './XpBar'
 
@@ -104,10 +104,11 @@ export default function Practice({
     setSelected(null)
   }
 
-  const swipeHandlers = useSwipeLeft(hasAnswered, next)
+  const { ref: cardRef, dragX, transitionMs } = useSwipeCard<HTMLDivElement>(hasAnswered, next)
+  const dragProgress = Math.min(1, Math.abs(dragX) / 280)
 
   return (
-    <div className="screen practice" {...swipeHandlers}>
+    <div className="screen practice">
       <div className="practice-header">
         <button className="icon-button" onClick={onExit} aria-label="Exit practice">
           ✕
@@ -133,7 +134,15 @@ export default function Practice({
         </div>
       </div>
 
-      <div className="question-card">
+      <div
+        className="question-card"
+        ref={cardRef}
+        style={{
+          transform: `translateX(${dragX}px) rotate(${dragX * 0.025}deg)`,
+          opacity: 1 - dragProgress * 0.7,
+          transition: transitionMs ? `transform ${transitionMs}ms ease-out, opacity ${transitionMs}ms ease-out` : 'none',
+        }}
+      >
         <div className="tag-row">
           <span className="skill-tag">{question.skill}</span>
           {question.difficulty && (

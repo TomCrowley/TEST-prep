@@ -1,7 +1,7 @@
 import type { Question } from '../types'
 import type { SessionResult } from '../game'
 import { MEDALS, getRankProgress } from '../game'
-import { useSwipeLeft } from '../useSwipeLeft'
+import { useSwipeCard } from '../useSwipeCard'
 import { useCountUp } from '../useCountUp'
 
 interface Props {
@@ -22,11 +22,19 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
   const rankAfter = getRankProgress(xpBefore + xpEarned)
   const rankedUp = rankAfter.index > rankBefore.index
 
-  const swipeHandlers = useSwipeLeft(true, onHome)
+  const { ref: screenRef, dragX, transitionMs } = useSwipeCard<HTMLDivElement>(true, onHome)
   const { value: animatedScore, done: scoreSettled } = useCountUp(summary.score)
 
   return (
-    <div className="screen results" {...swipeHandlers}>
+    <div
+      className="screen results"
+      ref={screenRef}
+      style={{
+        transform: `translateX(${dragX}px)`,
+        opacity: 1 - Math.min(1, Math.abs(dragX) / 280) * 0.7,
+        transition: transitionMs ? `transform ${transitionMs}ms ease-out, opacity ${transitionMs}ms ease-out` : 'none',
+      }}
+    >
       <div className="score-card">
         <span className="score-label">Battle Score</span>
         <span className={`score-pct${scoreSettled ? ' settled' : ''}`}>{animatedScore.toLocaleString()}</span>

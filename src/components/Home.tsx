@@ -32,10 +32,12 @@ function sectionStats(progress: ProgressMap, section?: Section) {
 
 export default function Home({ progress, profile, onStart, onReset, error }: Props) {
   const [confirmingReset, setConfirmingReset] = useState(false)
+  const [activeMedalId, setActiveMedalId] = useState<string | null>(null)
   const overall = sectionStats(progress)
   const math = sectionStats(progress, 'math')
   const reading = sectionStats(progress, 'reading')
   const rankProgress = getRankProgress(profile.xp)
+  const activeMedal = MEDALS.find((m) => m.id === activeMedalId) ?? null
 
   return (
     <div className="screen home">
@@ -71,12 +73,34 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
         {MEDALS.map((medal) => {
           const earned = profile.medals.includes(medal.id)
           return (
-            <div key={medal.id} className={`medal ${earned ? 'earned' : 'locked'}`} title={`${medal.name} — ${medal.description}`}>
+            <button
+              key={medal.id}
+              type="button"
+              className={`medal ${earned ? 'earned' : 'locked'}${activeMedalId === medal.id ? ' active' : ''}`}
+              title={`${medal.name} — ${medal.description}`}
+              onClick={() => setActiveMedalId((id) => (id === medal.id ? null : medal.id))}
+            >
               <span className="medal-icon">{medal.icon}</span>
-            </div>
+            </button>
           )
         })}
       </div>
+
+      {activeMedal && (
+        <div className="medal-detail">
+          <span className="medal-detail-icon">{activeMedal.icon}</span>
+          <div>
+            <div className="medal-detail-name">
+              {activeMedal.name}
+              {!profile.medals.includes(activeMedal.id) && <span className="medal-detail-locked"> · locked</span>}
+            </div>
+            <div className="medal-detail-desc">{activeMedal.description}</div>
+          </div>
+          <button className="medal-detail-close" onClick={() => setActiveMedalId(null)} aria-label="Close">
+            ✕
+          </button>
+        </div>
+      )}
 
       <div className="section-list">
         <button className="section-card" onClick={() => onStart('math')}>

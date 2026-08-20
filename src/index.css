@@ -76,6 +76,7 @@ button {
   flex-direction: column;
   gap: 16px;
   flex: 1;
+  touch-action: pan-y;
 }
 
 /* Home */
@@ -206,6 +207,8 @@ button {
   font-size: 24px;
   background: var(--card-bg);
   border: 1px solid var(--border);
+  padding: 0;
+  cursor: pointer;
 }
 .medal.earned {
   background: var(--gold-bg);
@@ -214,6 +217,48 @@ button {
 .medal.locked {
   filter: grayscale(1);
   opacity: 0.35;
+}
+.medal.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}
+
+.medal-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 14px;
+}
+.medal-detail-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.medal-detail-name {
+  font-weight: 700;
+  color: var(--text-h);
+  font-size: 15px;
+}
+.medal-detail-locked {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.medal-detail-desc {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+.medal-detail-close {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 4px;
+  cursor: pointer;
 }
 .stats-row strong {
   color: var(--text-h);
@@ -421,6 +466,8 @@ button {
   flex-direction: column;
   gap: 14px;
   box-shadow: var(--shadow);
+  touch-action: pan-y;
+  will-change: transform;
 }
 
 .tag-row {
