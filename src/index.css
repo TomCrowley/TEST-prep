@@ -105,8 +105,10 @@ button {
 }
 .rank-top {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
+  gap: 4px 12px;
 }
 .rank-name {
   font-size: 17px;
@@ -115,7 +117,13 @@ button {
 }
 .rank-xp {
   font-size: 13px;
+  font-weight: 400;
   color: var(--text-muted);
+}
+.rank-accuracy {
+  font-size: 13px;
+  color: var(--text-muted);
+  flex-shrink: 0;
 }
 .xp-bar {
   height: 8px;
@@ -159,19 +167,6 @@ button {
 .medal.locked {
   filter: grayscale(1);
   opacity: 0.35;
-}
-
-.stats-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-.stats-row-divided {
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-  margin-top: 4px;
 }
 .stats-row strong {
   color: var(--text-h);
