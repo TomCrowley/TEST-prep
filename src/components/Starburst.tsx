@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const RAY_COUNT = 10
 const SPARK_COUNT = 14
-const SPARK_COLORS = ['gold', 'accent', 'white']
+const SPARK_COLORS = ['gold', 'ember', 'white']
 const SMOKE_COUNT = 5
 
 interface Ray {
