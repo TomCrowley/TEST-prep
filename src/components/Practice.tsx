@@ -1,9 +1,12 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
+import { shuffle } from '../shuffle'
 import SwipeableCard from './SwipeableCard'
 import Starburst from './Starburst'
 import XpBar from './XpBar'
+
+const HINT_DELAY_MS = 45_000
 
 interface Props {
   questions: Question[]
@@ -36,6 +39,8 @@ export default function Practice({
   const [selected, setSelected] = useState<number | null>(initialSelected)
   const [answers, setAnswers] = useState<SessionAnswer[]>(initialAnswers)
   const [burstOrigin, setBurstOrigin] = useState<{ x: number; y: number } | null>(null)
+  const [hintAvailable, setHintAvailable] = useState(false)
+  const [eliminated, setEliminated] = useState<Set<number>>(new Set())
   // XP is applied the instant a correct answer is chosen, but the HUD bar
   // should only visibly update once the *next* question is on screen --
   // otherwise the fill/glow plays while still looking at the feedback for
@@ -66,6 +71,16 @@ export default function Practice({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index])
 
+  // A hint (eliminate 2 wrong answers) unlocks after spending 45s stuck on
+  // the same unanswered question. Reset on every new question.
+  useEffect(() => {
+    setHintAvailable(false)
+    setEliminated(new Set())
+    if (hasAnswered) return
+    const timeout = setTimeout(() => setHintAvailable(true), HINT_DELAY_MS)
+    return () => clearTimeout(timeout)
+  }, [index, hasAnswered])
+
   // A swipe gesture can leave native momentum scrolling in flight, which
   // fights a single synchronous scrollTo. Re-assert the top position on
   // the next couple of frames (and once more after momentum should have
@@ -93,6 +108,16 @@ export default function Practice({
       setBurstOrigin({ x: event.clientX, y: event.clientY })
       onXpEarned(pointsForCorrectAnswer(currentStreak + 1, question.difficulty))
     }
+  }
+
+  function revealHint() {
+    if (hasAnswered || !hintAvailable) return
+    const wrongIndexes = question.choices
+      .map((_, i) => i)
+      .filter((i) => i !== question.correctIndex)
+    const toEliminate = shuffle(wrongIndexes).slice(0, 2)
+    setEliminated(new Set(toEliminate))
+    setHintAvailable(false)
   }
 
   function next() {
@@ -152,13 +177,15 @@ export default function Practice({
             if (hasAnswered) {
               if (i === question.correctIndex) state = 'correct'
               else if (i === selected) state = 'incorrect'
+            } else if (eliminated.has(i)) {
+              state = 'eliminated'
             }
             return (
               <button
                 key={i}
                 className={`choice ${state}`}
                 onClick={(e) => choose(i, e)}
-                disabled={hasAnswered}
+                disabled={hasAnswered || eliminated.has(i)}
               >
                 <span className="choice-letter">{String.fromCharCode(65 + i)}</span>
                 <span className="choice-body" dangerouslySetInnerHTML={{ __html: choice }} />
@@ -166,6 +193,12 @@ export default function Practice({
             )
           })}
         </div>
+
+        {!hasAnswered && hintAvailable && (
+          <button className="hint-button" onClick={revealHint}>
+            💡 Use hint (removes 2 wrong answers)
+          </button>
+        )}
 
         {hasAnswered && (
           <div className={`feedback ${selected === question.correctIndex ? 'good' : 'bad'}`}>

@@ -630,6 +630,12 @@ button {
   background: var(--bad);
   color: white;
 }
+.choice.eliminated {
+  opacity: 0.4;
+}
+.choice.eliminated .choice-body {
+  text-decoration: line-through;
+}
 
 .feedback {
   border-radius: 12px;
@@ -799,6 +805,36 @@ button {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.hint-button {
+  background: none;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  animation: hint-in 0.3s ease-out;
+}
+.hint-button:active {
+  background: var(--gold-bg);
+}
+@keyframes hint-in {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hint-button {
+    animation: none;
+  }
 }
 
 /* Results */
