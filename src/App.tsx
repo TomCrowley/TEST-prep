@@ -91,8 +91,15 @@ function App() {
 
   function finishSession(answers: SessionAnswer[], questionsById: Map<string, Question>) {
     const summary = computeSessionSummary(answers, questionsById)
-    const lifetimeAttempts = Object.values(progress).reduce((sum, s) => sum + s.attempts, 0)
-    const newMedalIds = evaluateNewMedals(summary, lifetimeAttempts, new Set(profile.medals))
+    const progressStats = Object.values(progress)
+    const lifetime = {
+      attempts: progressStats.reduce((sum, s) => sum + s.attempts, 0),
+      correct: progressStats.reduce((sum, s) => sum + s.correct, 0),
+      distinctSeen: progressStats.length,
+    }
+    const earnedCounts: Record<string, number> = {}
+    for (const id of profile.medals) earnedCounts[id] = (earnedCounts[id] ?? 0) + 1
+    const newMedalIds = evaluateNewMedals(summary, lifetime, earnedCounts)
     awardMedals(newMedalIds)
     addXp(SESSION_COMPLETE_BONUS)
     setSessionResult({

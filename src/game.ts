@@ -1,4 +1,7 @@
 import type { Difficulty, Question, SessionAnswer } from './types'
+import { SECTION_TOTALS } from './questionBank'
+
+const TOTAL_QUESTIONS = SECTION_TOTALS.math + SECTION_TOTALS.reading
 
 export const DIFFICULTY_POINTS: Record<Difficulty, number> = { E: 100, M: 150, H: 250 }
 const DEFAULT_POINTS = 100
@@ -91,19 +94,25 @@ export interface Medal {
   name: string
   description: string
   icon: string
-  // Whether this medal can be earned again in a later session. First Blood
-  // and Veteran are one-time lifetime milestones; the rest are per-session
-  // achievements that can happen again any time they requalify.
+  // All medals can be earned again -- session-based ones (Marksman,
+  // Unstoppable, Ace, Sharpshooter) whenever a later session requalifies,
+  // and milestone ones (First Blood, Veteran, Recon) every time their
+  // running lifetime total crosses the next threshold in `milestones`.
   repeatable: boolean
+  /** Escalating lifetime thresholds for milestone medals. Undefined for
+   *  session-based achievement medals, which are just re-checked fresh
+   *  each session instead. */
+  milestones?: number[]
 }
 
 export const MEDALS: Medal[] = [
   {
     id: 'first_blood',
     name: 'First Blood',
-    description: 'Answer your first question correctly.',
+    description: 'Rack up correct answers, lifetime.',
     icon: '🎖️',
-    repeatable: false,
+    repeatable: true,
+    milestones: [1, 25, 100, 300, 750, 1500],
   },
   {
     id: 'marksman',
@@ -129,9 +138,10 @@ export const MEDALS: Medal[] = [
   {
     id: 'veteran',
     name: 'Veteran',
-    description: 'Answer 100 questions, lifetime.',
+    description: 'Rack up question attempts, lifetime.',
     icon: '🪖',
-    repeatable: false,
+    repeatable: true,
+    milestones: [100, 300, 750, 1500, 3000, 5000],
   },
   {
     id: 'sharpshooter',
@@ -139,6 +149,14 @@ export const MEDALS: Medal[] = [
     description: 'Get 5 Hard-difficulty questions right in one session.',
     icon: '💥',
     repeatable: true,
+  },
+  {
+    id: 'recon',
+    name: 'Recon',
+    description: 'See new questions from the bank, lifetime.',
+    icon: '🗺️',
+    repeatable: true,
+    milestones: [50, 150, 400, 800, TOTAL_QUESTIONS],
   },
 ]
 
@@ -194,26 +212,47 @@ export interface SessionResult {
   newMedalIds: string[]
 }
 
+export interface LifetimeStats {
+  attempts: number
+  correct: number
+  distinctSeen: number
+}
+
+// `earnedCounts` (how many times each medal id already appears in the
+// player's profile) rather than a plain earned/not-earned set, since a
+// milestone medal's next threshold depends on how many it's already
+// crossed, not just whether it's ever fired once.
 export function evaluateNewMedals(
   summary: SessionSummary,
-  lifetimeAttempts: number,
-  alreadyEarned: ReadonlySet<string>,
+  lifetime: LifetimeStats,
+  earnedCounts: Readonly<Record<string, number>>,
 ): string[] {
   const earned: string[] = []
-  const qualifies = (id: string, condition: boolean) => {
-    if (!condition) return
-    const medal = MEDALS.find((m) => m.id === id)
-    if (!medal) return
-    if (alreadyEarned.has(id) && !medal.repeatable) return
-    earned.push(id)
+
+  const qualifiesThisSession = (id: string, condition: boolean) => {
+    if (condition) earned.push(id)
   }
 
-  qualifies('first_blood', summary.correctCount >= 1)
-  qualifies('marksman', summary.maxStreak >= 5)
-  qualifies('unstoppable', summary.maxStreak >= 8)
-  qualifies('ace', summary.total >= 10 && summary.correctCount === summary.total)
-  qualifies('veteran', lifetimeAttempts >= 100)
-  qualifies('sharpshooter', summary.hardCorrectCount >= 5)
+  // Awards one copy of `id` for every threshold in its `milestones` list
+  // that the current lifetime total has crossed but wasn't already
+  // credited for -- normally 0 or 1 per session, but handles a session
+  // that leaps past more than one threshold at once too.
+  const qualifiesMilestones = (id: string, value: number) => {
+    const medal = MEDALS.find((m) => m.id === id)
+    const thresholds = medal?.milestones ?? []
+    const crossed = thresholds.filter((t) => value >= t).length
+    const newlyCrossed = crossed - (earnedCounts[id] ?? 0)
+    for (let i = 0; i < newlyCrossed; i++) earned.push(id)
+  }
+
+  qualifiesThisSession('marksman', summary.maxStreak >= 5)
+  qualifiesThisSession('unstoppable', summary.maxStreak >= 8)
+  qualifiesThisSession('ace', summary.total >= 10 && summary.correctCount === summary.total)
+  qualifiesThisSession('sharpshooter', summary.hardCorrectCount >= 5)
+
+  qualifiesMilestones('first_blood', lifetime.correct)
+  qualifiesMilestones('veteran', lifetime.attempts)
+  qualifiesMilestones('recon', lifetime.distinctSeen)
 
   return earned
 }
