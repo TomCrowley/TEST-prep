@@ -71,7 +71,8 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
 
       <div className="medal-case">
         {MEDALS.map((medal) => {
-          const earned = profile.medals.includes(medal.id)
+          const count = profile.medals.filter((id) => id === medal.id).length
+          const earned = count > 0
           return (
             <button
               key={medal.id}
@@ -81,6 +82,7 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
               onClick={() => setActiveMedalId((id) => (id === medal.id ? null : medal.id))}
             >
               <span className="medal-icon">{medal.icon}</span>
+              {medal.repeatable && count > 1 && <span className="medal-count">x{count}</span>}
             </button>
           )
         })}
@@ -92,7 +94,12 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
           <div>
             <div className="medal-detail-name">
               {activeMedal.name}
-              {!profile.medals.includes(activeMedal.id) && <span className="medal-detail-locked"> · locked</span>}
+              {(() => {
+                const count = profile.medals.filter((id) => id === activeMedal.id).length
+                if (count === 0) return <span className="medal-detail-locked"> · locked</span>
+                if (activeMedal.repeatable && count > 1) return <span className="medal-detail-count"> · x{count}</span>
+                return null
+              })()}
             </div>
             <div className="medal-detail-desc">{activeMedal.description}</div>
           </div>

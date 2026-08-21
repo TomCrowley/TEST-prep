@@ -91,15 +91,55 @@ export interface Medal {
   name: string
   description: string
   icon: string
+  // Whether this medal can be earned again in a later session. First Blood
+  // and Veteran are one-time lifetime milestones; the rest are per-session
+  // achievements that can happen again any time they requalify.
+  repeatable: boolean
 }
 
 export const MEDALS: Medal[] = [
-  { id: 'first_blood', name: 'First Blood', description: 'Answer your first question correctly.', icon: '🎖️' },
-  { id: 'marksman', name: 'Marksman', description: 'Get a 5-answer correct streak in one session.', icon: '🎯' },
-  { id: 'unstoppable', name: 'Unstoppable', description: 'Get an 8-answer correct streak in one session.', icon: '🔥' },
-  { id: 'ace', name: 'Ace', description: 'Answer every question correctly in a full session.', icon: '🏆' },
-  { id: 'veteran', name: 'Veteran', description: 'Answer 100 questions, lifetime.', icon: '🪖' },
-  { id: 'sharpshooter', name: 'Sharpshooter', description: 'Get 5 Hard-difficulty questions right in one session.', icon: '💥' },
+  {
+    id: 'first_blood',
+    name: 'First Blood',
+    description: 'Answer your first question correctly.',
+    icon: '🎖️',
+    repeatable: false,
+  },
+  {
+    id: 'marksman',
+    name: 'Marksman',
+    description: 'Get a 5-answer correct streak in one session.',
+    icon: '🎯',
+    repeatable: true,
+  },
+  {
+    id: 'unstoppable',
+    name: 'Unstoppable',
+    description: 'Get an 8-answer correct streak in one session.',
+    icon: '🔥',
+    repeatable: true,
+  },
+  {
+    id: 'ace',
+    name: 'Ace',
+    description: 'Answer every question correctly in a full session.',
+    icon: '🏆',
+    repeatable: true,
+  },
+  {
+    id: 'veteran',
+    name: 'Veteran',
+    description: 'Answer 100 questions, lifetime.',
+    icon: '🪖',
+    repeatable: false,
+  },
+  {
+    id: 'sharpshooter',
+    name: 'Sharpshooter',
+    description: 'Get 5 Hard-difficulty questions right in one session.',
+    icon: '💥',
+    repeatable: true,
+  },
 ]
 
 export interface AnsweredPoint {
@@ -161,7 +201,11 @@ export function evaluateNewMedals(
 ): string[] {
   const earned: string[] = []
   const qualifies = (id: string, condition: boolean) => {
-    if (condition && !alreadyEarned.has(id)) earned.push(id)
+    if (!condition) return
+    const medal = MEDALS.find((m) => m.id === id)
+    if (!medal) return
+    if (alreadyEarned.has(id) && !medal.repeatable) return
+    earned.push(id)
   }
 
   qualifies('first_blood', summary.correctCount >= 1)
