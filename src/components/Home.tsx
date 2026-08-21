@@ -42,6 +42,11 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
   const overall = sectionStats(progress, bank)
   const math = sectionStats(progress, bank, 'math')
   const reading = sectionStats(progress, bank, 'reading')
+  // Reset clears progress for every bank at once, so whether to show the
+  // link can't be scoped to the currently toggled bank's answered count --
+  // that would hide it while viewing PSAT even though SAT progress (or vice
+  // versa) still exists to reset.
+  const hasAnyProgress = Object.keys(progress).length > 0
   const rankProgress = getRankProgress(profile.xp)
   const activeMedal = MEDALS.find((m) => m.id === activeMedalId) ?? null
 
@@ -162,7 +167,7 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
           </div>
         </div>
 
-        {overall.answered > 0 && (
+        {hasAnyProgress && (
           <button className="reset-link" onClick={() => setConfirmingReset(true)}>
             Reset progress
           </button>
