@@ -553,6 +553,15 @@ button {
      to read on our dark theme without distorting any real color use. */
   filter: invert(0.92) hue-rotate(180deg);
 }
+/* The source HTML wraps tables in <figure>, which carries a 40px
+   left+right margin in the browser default stylesheet -- left alone, that
+   eats most of the card's width and leaves the table cramped between two
+   big gutters instead of using the space available for it. */
+.prompt figure,
+.passage figure,
+.feedback-explanation figure {
+  margin: 0;
+}
 .prompt table,
 .passage table,
 .feedback-explanation table {
@@ -563,7 +572,7 @@ button {
   display: block;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  max-width: 100%;
+  width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   margin: 8px 0;
