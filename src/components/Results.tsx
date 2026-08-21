@@ -3,6 +3,7 @@ import type { SessionResult } from '../game'
 import { MEDALS, getRankProgress } from '../game'
 import SwipeableCard from './SwipeableCard'
 import { useCountUp } from '../useCountUp'
+import { useScrollToTop } from '../useScrollToTop'
 
 interface Props {
   questions: Question[]
@@ -23,6 +24,10 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
   const rankedUp = rankAfter.index > rankBefore.index
 
   const { value: animatedScore, done: scoreSettled } = useCountUp(summary.score)
+
+  // Landing here after swiping/tapping through a scrolled-down last
+  // question shouldn't skip past the Battle Score reveal.
+  useScrollToTop()
 
   return (
     <SwipeableCard className="screen results" enabled onSwipe={onHome}>

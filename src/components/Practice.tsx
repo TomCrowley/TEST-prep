@@ -1,7 +1,8 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
 import { shuffle } from '../shuffle'
+import { useScrollToTop } from '../useScrollToTop'
 import SwipeableCard from './SwipeableCard'
 import Starburst from './Starburst'
 import XpBar from './XpBar'
@@ -81,29 +82,8 @@ export default function Practice({
     return () => clearTimeout(timeout)
   }, [index, hasAnswered])
 
-  // A swipe gesture can leave native momentum scrolling in flight, and on
-  // iOS that can keep drifting the page for several hundred ms after
-  // touchend -- long enough to outlast a fixed number of retries. Instead,
-  // keep re-asserting the top position on every frame for a full window
-  // after mount, so the progress bar and streak HUD are always visible.
-  // Bail out immediately if the user actually touches the screen again --
-  // this should never fight real, intentional scrolling.
-  useLayoutEffect(() => {
-    window.scrollTo(0, 0)
-    const deadline = performance.now() + 600
-    let rafId = requestAnimationFrame(function tick() {
-      window.scrollTo(0, 0)
-      if (performance.now() < deadline) {
-        rafId = requestAnimationFrame(tick)
-      }
-    })
-    const stop = () => cancelAnimationFrame(rafId)
-    window.addEventListener('touchstart', stop, { once: true, passive: true })
-    return () => {
-      cancelAnimationFrame(rafId)
-      window.removeEventListener('touchstart', stop)
-    }
-  }, [index])
+  // Keeps the progress bar and streak HUD visible on every new question.
+  useScrollToTop(index)
 
   function choose(choiceIndex: number, event: React.MouseEvent) {
     if (hasAnswered) return
