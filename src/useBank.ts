@@ -5,7 +5,7 @@ const STORAGE_KEY = 'sat-prep-bank'
 
 function loadBank(): Bank {
   const raw = localStorage.getItem(STORAGE_KEY)
-  return raw === 'psat' ? 'psat' : 'sat'
+  return raw === 'sat' ? 'sat' : 'psat'
 }
 
 export function useBank() {
