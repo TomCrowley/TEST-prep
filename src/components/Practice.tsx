@@ -81,20 +81,27 @@ export default function Practice({
     return () => clearTimeout(timeout)
   }, [index, hasAnswered])
 
-  // A swipe gesture can leave native momentum scrolling in flight, which
-  // fights a single synchronous scrollTo. Re-assert the top position on
-  // the next couple of frames (and once more after momentum should have
-  // settled) so the progress bar and streak HUD are always visible.
+  // A swipe gesture can leave native momentum scrolling in flight, and on
+  // iOS that can keep drifting the page for several hundred ms after
+  // touchend -- long enough to outlast a fixed number of retries. Instead,
+  // keep re-asserting the top position on every frame for a full window
+  // after mount, so the progress bar and streak HUD are always visible.
+  // Bail out immediately if the user actually touches the screen again --
+  // this should never fight real, intentional scrolling.
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
-    const raf1 = requestAnimationFrame(() => {
+    const deadline = performance.now() + 600
+    let rafId = requestAnimationFrame(function tick() {
       window.scrollTo(0, 0)
-      requestAnimationFrame(() => window.scrollTo(0, 0))
+      if (performance.now() < deadline) {
+        rafId = requestAnimationFrame(tick)
+      }
     })
-    const timeout = setTimeout(() => window.scrollTo(0, 0), 300)
+    const stop = () => cancelAnimationFrame(rafId)
+    window.addEventListener('touchstart', stop, { once: true, passive: true })
     return () => {
-      cancelAnimationFrame(raf1)
-      clearTimeout(timeout)
+      cancelAnimationFrame(rafId)
+      window.removeEventListener('touchstart', stop)
     }
   }, [index])
 
