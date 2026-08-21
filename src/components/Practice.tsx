@@ -144,10 +144,10 @@ export default function Practice({
       </div>
 
       <div className="hud-row">
-        <span className="hud-score">⭐ {summary.score.toLocaleString()}</span>
+        <span className="hud-score">✨ {summary.score.toLocaleString()}</span>
         {currentStreak >= 2 && (
           <span className="hud-streak">
-            🔥 {currentStreak}
+            {currentTier.icon} {currentStreak}
             {currentTier.label ? ` · ${currentTier.label}` : ''}
           </span>
         )}
