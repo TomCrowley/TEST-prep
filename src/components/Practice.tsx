@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
-import { useSwipeCard } from '../useSwipeCard'
+import SwipeableCard from './SwipeableCard'
 import Starburst from './Starburst'
 import XpBar from './XpBar'
 
@@ -104,9 +104,6 @@ export default function Practice({
     setSelected(null)
   }
 
-  const { ref: cardRef, dragX, transitionMs } = useSwipeCard<HTMLDivElement>(hasAnswered, next)
-  const dragProgress = Math.min(1, Math.abs(dragX) / 280)
-
   return (
     <div className="screen practice">
       <div className="practice-header">
@@ -134,15 +131,7 @@ export default function Practice({
         </div>
       </div>
 
-      <div
-        className="question-card"
-        ref={cardRef}
-        style={{
-          transform: `translateX(${dragX}px) rotate(${dragX * 0.025}deg)`,
-          opacity: 1 - dragProgress * 0.7,
-          transition: transitionMs ? `transform ${transitionMs}ms ease-out, opacity ${transitionMs}ms ease-out` : 'none',
-        }}
-      >
+      <SwipeableCard className="question-card" enabled={hasAnswered} onSwipe={next} rotate>
         <div className="tag-row">
           <span className="skill-tag">{question.skill}</span>
           {question.difficulty && (
@@ -196,7 +185,7 @@ export default function Practice({
             />
           </div>
         )}
-      </div>
+      </SwipeableCard>
 
       {hasAnswered && selected === question.correctIndex && (
         <Starburst key={question.id} origin={burstOrigin ?? undefined} />
