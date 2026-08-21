@@ -31,4 +31,6 @@ export interface SessionAnswer {
   questionId: string
   chosenIndex: number
   correct: boolean
+  /** Whether the hint (eliminate 2 wrong answers) was used before answering -- halves the XP earned. */
+  hintUsed: boolean
 }

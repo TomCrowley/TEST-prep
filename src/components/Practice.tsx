@@ -42,6 +42,7 @@ export default function Practice({
   const [burstOrigin, setBurstOrigin] = useState<{ x: number; y: number } | null>(null)
   const [hintAvailable, setHintAvailable] = useState(false)
   const [eliminated, setEliminated] = useState<Set<number>>(new Set())
+  const [hintUsed, setHintUsed] = useState(false)
   // XP is applied the instant a correct answer is chosen, but the HUD bar
   // should only visibly update once the *next* question is on screen --
   // otherwise the fill/glow plays while still looking at the feedback for
@@ -77,6 +78,7 @@ export default function Practice({
   useEffect(() => {
     setHintAvailable(false)
     setEliminated(new Set())
+    setHintUsed(false)
     if (hasAnswered) return
     const timeout = setTimeout(() => setHintAvailable(true), HINT_DELAY_MS)
     return () => clearTimeout(timeout)
@@ -90,10 +92,10 @@ export default function Practice({
     const correct = choiceIndex === question.correctIndex
     setSelected(choiceIndex)
     onAnswer(question.id, question.section, correct)
-    setAnswers((prev) => [...prev, { questionId: question.id, chosenIndex: choiceIndex, correct }])
+    setAnswers((prev) => [...prev, { questionId: question.id, chosenIndex: choiceIndex, correct, hintUsed }])
     if (correct) {
       setBurstOrigin({ x: event.clientX, y: event.clientY })
-      onXpEarned(pointsForCorrectAnswer(currentStreak + 1, question.difficulty))
+      onXpEarned(pointsForCorrectAnswer(currentStreak + 1, question.difficulty, hintUsed))
     }
   }
 
@@ -105,6 +107,7 @@ export default function Practice({
     const toEliminate = shuffle(wrongIndexes).slice(0, 2)
     setEliminated(new Set(toEliminate))
     setHintAvailable(false)
+    setHintUsed(true)
   }
 
   function next() {
@@ -183,7 +186,7 @@ export default function Practice({
 
         {!hasAnswered && hintAvailable && (
           <button className="hint-button" onClick={revealHint}>
-            💡 Use hint (removes 2 wrong answers)
+            💡 Use hint (removes 2 wrong answers, halves XP)
           </button>
         )}
 

@@ -43,11 +43,12 @@ export function getStreakTier(streak: number): StreakTier {
 }
 
 // Points for a correct answer, given the streak count *after* this answer
-// (i.e. including it) and the question's difficulty.
-export function pointsForCorrectAnswer(streakAfter: number, difficulty: Difficulty | null): number {
+// (i.e. including it) and the question's difficulty. Using the hint halves it.
+export function pointsForCorrectAnswer(streakAfter: number, difficulty: Difficulty | null, hintUsed = false): number {
   const base = (difficulty && DIFFICULTY_POINTS[difficulty]) || DEFAULT_POINTS
   const tier = getStreakTier(streakAfter)
-  return Math.round(base * tier.multiplier)
+  const points = base * tier.multiplier
+  return Math.round(hintUsed ? points * 0.5 : points)
 }
 
 export interface Rank {
@@ -194,7 +195,7 @@ export function computeSessionSummary(answers: SessionAnswer[], questionsById: M
       correctCount += 1
       maxStreak = Math.max(maxStreak, streak)
       const tier = getStreakTier(streak)
-      const earned = pointsForCorrectAnswer(streak, question?.difficulty ?? null)
+      const earned = pointsForCorrectAnswer(streak, question?.difficulty ?? null, answer.hintUsed)
       score += earned
       if (question?.difficulty === 'H') hardCorrectCount += 1
       points.push({ answer, streakAfter: streak, points: earned, tier })
