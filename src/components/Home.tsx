@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import type { ProgressMap, Section } from '../types'
-import { SECTION_TOTALS } from '../questionBank'
+import type { Bank, ProgressMap, Section } from '../types'
+import { SECTION_TOTALS, bankOfQuestionId } from '../questionBank'
 import { MEDALS, getRankProgress } from '../game'
 import type { Profile } from '../useProfile'
 import XpBar from './XpBar'
@@ -8,18 +8,22 @@ import XpBar from './XpBar'
 interface Props {
   progress: ProgressMap
   profile: Profile
+  bank: Bank
+  onBankChange: (bank: Bank) => void
   onStart: (section: Section | 'all') => void
   onReset: () => void
   error?: string | null
 }
 
-function sectionStats(progress: ProgressMap, section?: Section) {
+function sectionStats(progress: ProgressMap, bank: Bank, section?: Section) {
   let attempts = 0
   let correct = 0
   let answered = 0
-  const total = section ? SECTION_TOTALS[section] : SECTION_TOTALS.math + SECTION_TOTALS.reading
+  const totals = SECTION_TOTALS[bank]
+  const total = section ? totals[section] : totals.math + totals.reading
 
-  for (const stat of Object.values(progress)) {
+  for (const [id, stat] of Object.entries(progress)) {
+    if (bankOfQuestionId(id) !== bank) continue
     if (section && stat.section !== section) continue
     answered += 1
     attempts += stat.attempts
@@ -30,12 +34,14 @@ function sectionStats(progress: ProgressMap, section?: Section) {
   return { answered, total, accuracy }
 }
 
-export default function Home({ progress, profile, onStart, onReset, error }: Props) {
+const BANK_LABELS: Record<Bank, string> = { sat: 'SAT', psat: 'PSAT' }
+
+export default function Home({ progress, profile, bank, onBankChange, onStart, onReset, error }: Props) {
   const [confirmingReset, setConfirmingReset] = useState(false)
   const [activeMedalId, setActiveMedalId] = useState<string | null>(null)
-  const overall = sectionStats(progress)
-  const math = sectionStats(progress, 'math')
-  const reading = sectionStats(progress, 'reading')
+  const overall = sectionStats(progress, bank)
+  const math = sectionStats(progress, bank, 'math')
+  const reading = sectionStats(progress, bank, 'reading')
   const rankProgress = getRankProgress(profile.xp)
   const activeMedal = MEDALS.find((m) => m.id === activeMedalId) ?? null
 
@@ -44,7 +50,7 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
       <header className="hero">
         <h1>BattlePrep II</h1>
         <p className="tagline">Campus Invasion Edition</p>
-        <p className="subtitle">SAT Math and Reading &amp; Writing, gamified.</p>
+        <p className="subtitle">{BANK_LABELS[bank]} Math and Reading &amp; Writing, gamified.</p>
       </header>
 
       {error && <p className="error-message">{error}</p>}
@@ -139,11 +145,29 @@ export default function Home({ progress, profile, onStart, onReset, error }: Pro
         </button>
       </div>
 
-      {overall.answered > 0 && (
-        <button className="reset-link" onClick={() => setConfirmingReset(true)}>
-          Reset progress
-        </button>
-      )}
+      <div className="home-footer">
+        <div className="bank-toggle">
+          <span className="bank-toggle-label">Question bank</span>
+          <div className="bank-toggle-buttons">
+            {(Object.keys(BANK_LABELS) as Bank[]).map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={`bank-toggle-button${bank === option ? ' active' : ''}`}
+                onClick={() => onBankChange(option)}
+              >
+                {BANK_LABELS[option]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {overall.answered > 0 && (
+          <button className="reset-link" onClick={() => setConfirmingReset(true)}>
+            Reset progress
+          </button>
+        )}
+      </div>
 
       {confirmingReset && (
         <div className="modal-overlay" onClick={() => setConfirmingReset(false)}>

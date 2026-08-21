@@ -1,4 +1,5 @@
 export type Section = 'math' | 'reading'
+export type Bank = 'sat' | 'psat'
 export type Difficulty = 'E' | 'M' | 'H'
 
 export interface Question {

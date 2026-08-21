@@ -1,7 +1,10 @@
 import type { Difficulty, Question, SessionAnswer } from './types'
 import { SECTION_TOTALS } from './questionBank'
 
-const TOTAL_QUESTIONS = SECTION_TOTALS.math + SECTION_TOTALS.reading
+// Recon's final milestone is "seen everything" -- across both banks, since
+// distinctSeen counts SAT and PSAT questions together (rewards aren't
+// split by bank, only the question pool is).
+const TOTAL_QUESTIONS = Object.values(SECTION_TOTALS).reduce((sum, totals) => sum + totals.math + totals.reading, 0)
 
 export const DIFFICULTY_POINTS: Record<Difficulty, number> = { E: 100, M: 150, H: 250 }
 const DEFAULT_POINTS = 100

@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Raw question-bank dumps (fetched by scripts/fetch-psat-questions.py);
+# only the converted public/data/*.json outputs are committed.
+/data
+__pycache__
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

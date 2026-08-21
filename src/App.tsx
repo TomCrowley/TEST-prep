@@ -3,6 +3,7 @@ import { loadQuestions } from './questionBank'
 import { shuffle } from './shuffle'
 import { useProgress } from './useProgress'
 import { useProfile } from './useProfile'
+import { useBank } from './useBank'
 import { computeSessionSummary, evaluateNewMedals, SESSION_COMPLETE_BONUS, type SessionResult } from './game'
 import type { Question, Section, SessionAnswer } from './types'
 import { loadSession, saveSession, clearSession } from './sessionPersistence'
@@ -24,6 +25,7 @@ function pickSession(pool: Question[], progress: ReturnType<typeof useProgress>[
 function App() {
   const { progress, recordAnswer, resetProgress } = useProgress()
   const { profile, addXp, awardMedals, resetProfile } = useProfile()
+  const { bank, setBank } = useBank()
 
   // Read once on mount: if the tab was refreshed mid-session, resume
   // exactly where it left off instead of dropping back to the home screen.
@@ -78,7 +80,7 @@ function App() {
     setScreen('loading')
     setLoadError(null)
     try {
-      const pool = await loadQuestions(chosenSection)
+      const pool = await loadQuestions(bank, chosenSection)
       setSessionQuestions(pickSession(pool, progress))
       setSessionResult(null)
       sessionStartXp.current = profile.xp
@@ -125,7 +127,15 @@ function App() {
   return (
     <div className="app-shell">
       {screen === 'home' && (
-        <Home progress={progress} profile={profile} onStart={startSession} onReset={resetAll} error={loadError} />
+        <Home
+          progress={progress}
+          profile={profile}
+          bank={bank}
+          onBankChange={setBank}
+          onStart={startSession}
+          onReset={resetAll}
+          error={loadError}
+        />
       )}
       {screen === 'loading' && (
         <div className="screen loading">
