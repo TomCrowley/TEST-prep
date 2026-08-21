@@ -554,17 +554,29 @@ button {
   filter: invert(0.92) hue-rotate(180deg);
 }
 .prompt table,
+.passage table,
 .feedback-explanation table {
+  /* `display: block` on the table itself (rather than wrapping it in a
+     div) lets a table wider than the card scroll horizontally instead of
+     overflowing the viewport -- the row/cell display types below are left
+     alone so the table layout algorithm still runs inside that scroller. */
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   margin: 8px 0;
 }
 .prompt th,
 .prompt td,
+.passage th,
+.passage td,
 .feedback-explanation th,
 .feedback-explanation td {
   border: 1px solid var(--border);
   padding: 4px 8px;
+  white-space: nowrap;
 }
 .underline {
   text-decoration: underline;
