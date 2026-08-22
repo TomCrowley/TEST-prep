@@ -71,18 +71,21 @@ export const RANKS: Rank[] = [
   // Past General there's no higher real rank to hold, so the theme turns:
   // titles escalate from the last real military grade into increasingly
   // mythic, knowledge-god territory, and the XP curve goes fully
-  // exponential (~1.5x per rank) instead of the decelerating growth above --
-  // Scholastic God is meant to be a genuine long-haul grind, not a wall.
-  { name: 'Field Marshal', minXp: 65000, description: 'Commands every front. As high as real armies go.' },
-  { name: 'Warlord', minXp: 100000, description: 'Answers to no one. Feared across the battlefield.' },
-  { name: 'Grandmaster', minXp: 150000, description: 'The battlefield becomes a chessboard.' },
-  { name: 'Mastermind', minXp: 230000, description: 'Every question solved before it finishes being asked.' },
-  { name: 'Sage', minXp: 350000, description: 'Knowledge itself starts to bend to your will.' },
-  { name: 'Oracle', minXp: 530000, description: 'You see the answer before the question is written.' },
-  { name: 'Luminary', minXp: 800000, description: 'A legend whispered about in study halls.' },
-  { name: 'Archon', minXp: 1200000, description: 'Ruler of the exam realm.' },
-  { name: 'Ascendant', minXp: 1800000, description: 'Beyond rank. Beyond rival.' },
-  { name: 'Scholastic God', minXp: 2700000, description: 'There is no higher truth. You are the curriculum.' },
+  // exponential (~1.4x per rank) instead of the decelerating growth above.
+  // Scholastic God is calibrated so a clean, no-mistakes pass through
+  // every question in both banks (simulated: ~1.35M XP, varying only
+  // slightly with play order) clears it with room to spare -- "answer
+  // everything correctly" is the top rank, not a multi-clear grind.
+  { name: 'Field Marshal', minXp: 63000, description: 'Commands every front. As high as real armies go.' },
+  { name: 'Warlord', minXp: 88000, description: 'Answers to no one. Feared across the battlefield.' },
+  { name: 'Grandmaster', minXp: 123000, description: 'The battlefield becomes a chessboard.' },
+  { name: 'Mastermind', minXp: 173000, description: 'Every question solved before it finishes being asked.' },
+  { name: 'Sage', minXp: 242000, description: 'Knowledge itself starts to bend to your will.' },
+  { name: 'Oracle', minXp: 339000, description: 'You see the answer before the question is written.' },
+  { name: 'Luminary', minXp: 474000, description: 'A legend whispered about in study halls.' },
+  { name: 'Archon', minXp: 663000, description: 'Ruler of the exam realm.' },
+  { name: 'Ascendant', minXp: 929000, description: 'Beyond rank. Beyond rival.' },
+  { name: 'Scholastic God', minXp: 1300000, description: 'There is no higher truth. You are the curriculum.' },
 ]
 
 export interface RankProgress {
