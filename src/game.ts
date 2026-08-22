@@ -57,34 +57,62 @@ export interface Rank {
   description: string
 }
 
+// 40 ranks, a single ~1.137x-per-rank exponential climb (rank 1 is the
+// fixed 0 XP starting point). Rank 20 (the middle) lands at 100,000 XP;
+// rank 40 (Scholastic God) at 1,300,000 -- the same ceiling as before,
+// still comfortably under the ~1.35M XP a clean, no-mistakes pass
+// through every question in both banks earns (simulated, stable within
+// +-5K across random play orders), so "answer everything correctly"
+// still reaches the top rank rather than requiring repeat grinding.
+//
+// Each of the original 20 names got doubled into a pair: an adjective-
+// qualified "lesser" tier followed by the plain name as its graduation --
+// reusing real military qualifiers where one exists (Buck Private, Lance
+// Corporal, Second Lieutenant, Lieutenant Colonel, Brigadier General are
+// all genuine ranks) and matching invented ones for the mythic back half.
 export const RANKS: Rank[] = [
-  { name: 'Recruit', minXp: 0, description: 'Boots on the ground. Everyone starts here.' },
-  { name: 'Private', minXp: 800, description: 'Cleared basic. Trusted with a rifle.' },
-  { name: 'Corporal', minXp: 2000, description: 'Leads a fire team.' },
-  { name: 'Sergeant', minXp: 4000, description: 'Runs the squad, no excuses.' },
-  { name: 'Staff Sergeant', minXp: 7000, description: 'Senior NCO. Sets the standard.' },
-  { name: 'Lieutenant', minXp: 11000, description: 'First officer stripes. Leads from the front.' },
-  { name: 'Captain', minXp: 16000, description: 'Commands a full company.' },
-  { name: 'Major', minXp: 23000, description: 'Battalion staff. Plans the assault.' },
-  { name: 'Colonel', minXp: 32000, description: 'Commands a regiment.' },
-  { name: 'General', minXp: 45000, description: 'Top of the chain of command.' },
-  // Past General there's no higher real rank to hold, so the theme turns:
-  // titles escalate from the last real military grade into increasingly
-  // mythic, knowledge-god territory, and the XP curve goes fully
-  // exponential (~1.4x per rank) instead of the decelerating growth above.
-  // Scholastic God is calibrated so a clean, no-mistakes pass through
-  // every question in both banks (simulated: ~1.35M XP, varying only
-  // slightly with play order) clears it with room to spare -- "answer
-  // everything correctly" is the top rank, not a multi-clear grind.
-  { name: 'Field Marshal', minXp: 63000, description: 'Commands every front. As high as real armies go.' },
-  { name: 'Warlord', minXp: 88000, description: 'Answers to no one. Feared across the battlefield.' },
-  { name: 'Grandmaster', minXp: 123000, description: 'The battlefield becomes a chessboard.' },
-  { name: 'Mastermind', minXp: 173000, description: 'Every question solved before it finishes being asked.' },
-  { name: 'Sage', minXp: 242000, description: 'Knowledge itself starts to bend to your will.' },
-  { name: 'Oracle', minXp: 339000, description: 'You see the answer before the question is written.' },
-  { name: 'Luminary', minXp: 474000, description: 'A legend whispered about in study halls.' },
-  { name: 'Archon', minXp: 663000, description: 'Ruler of the exam realm.' },
-  { name: 'Ascendant', minXp: 929000, description: 'Beyond rank. Beyond rival.' },
+  { name: 'Raw Recruit', minXp: 0, description: 'Fresh off the bus. Everyone starts here.' },
+  { name: 'Recruit', minXp: 9900, description: 'Boots on the ground, orders understood.' },
+  { name: 'Buck Private', minXp: 11300, description: 'Cleared basic. Still learning the ropes.' },
+  { name: 'Private', minXp: 12800, description: 'Trusted with a rifle.' },
+  { name: 'Lance Corporal', minXp: 14600, description: 'One step from leading a team.' },
+  { name: 'Corporal', minXp: 16600, description: 'Leads a fire team.' },
+  { name: 'Junior Sergeant', minXp: 18900, description: 'New stripes, already running drills.' },
+  { name: 'Sergeant', minXp: 21500, description: 'Runs the squad, no excuses.' },
+  { name: 'Acting Staff Sergeant', minXp: 24400, description: 'Holding the rank, earning the title.' },
+  { name: 'Staff Sergeant', minXp: 27700, description: 'Senior NCO. Sets the standard.' },
+  { name: 'Second Lieutenant', minXp: 31500, description: 'First officer stripes, still finding their feet.' },
+  { name: 'Lieutenant', minXp: 35800, description: 'Leads from the front.' },
+  { name: 'Junior Captain', minXp: 40700, description: 'Given a command, still proving it.' },
+  { name: 'Captain', minXp: 46300, description: 'Commands a full company.' },
+  { name: 'Acting Major', minXp: 52700, description: "Filling the post before it's made official." },
+  { name: 'Major', minXp: 59900, description: 'Battalion staff. Plans the assault.' },
+  { name: 'Lieutenant Colonel', minXp: 68100, description: 'Second-in-command of a regiment.' },
+  { name: 'Colonel', minXp: 77400, description: 'Commands a regiment.' },
+  { name: 'Brigadier General', minXp: 88000, description: "One star. The generals' ranks begin." },
+  { name: 'General', minXp: 100000, description: 'Top of the chain of command.' },
+  // Past General there's no higher real rank to hold, so the theme turns
+  // from real military grades into increasingly mythic, knowledge-god
+  // territory.
+  { name: 'Acting Field Marshal', minXp: 114000, description: 'Holding the highest field command, not yet confirmed.' },
+  { name: 'Field Marshal', minXp: 129000, description: 'Commands every front. As high as real armies go.' },
+  { name: 'Rising Warlord', minXp: 147000, description: 'Carving out territory, one battle at a time.' },
+  { name: 'Warlord', minXp: 167000, description: 'Answers to no one. Feared across the battlefield.' },
+  { name: 'Rising Grandmaster', minXp: 190000, description: 'Sees ten moves ahead, still counting.' },
+  { name: 'Grandmaster', minXp: 216000, description: 'The battlefield becomes a chessboard.' },
+  { name: 'Emerging Mastermind', minXp: 245000, description: 'The plan is coming together.' },
+  { name: 'Mastermind', minXp: 279000, description: 'Every question solved before it finishes being asked.' },
+  { name: 'Young Sage', minXp: 317000, description: 'Wisdom beyond their years, and it shows.' },
+  { name: 'Sage', minXp: 361000, description: 'Knowledge itself starts to bend to your will.' },
+  { name: 'Lesser Oracle', minXp: 410000, description: 'Glimpses of the answer, not yet the certainty.' },
+  { name: 'Oracle', minXp: 466000, description: 'You see the answer before the question is written.' },
+  { name: 'Rising Luminary', minXp: 530000, description: 'Word is starting to spread.' },
+  { name: 'Luminary', minXp: 602000, description: 'A legend whispered about in study halls.' },
+  { name: 'Lesser Archon', minXp: 685000, description: "Holds a fraction of the throne's authority." },
+  { name: 'Archon', minXp: 778000, description: 'Ruler of the exam realm.' },
+  { name: 'Nascent Ascendant', minXp: 885000, description: 'Almost beyond rank entirely.' },
+  { name: 'Ascendant', minXp: 1010000, description: 'Beyond rank. Beyond rival.' },
+  { name: 'Aspiring Scholastic God', minXp: 1140000, description: 'Mortal, but not for long.' },
   { name: 'Scholastic God', minXp: 1300000, description: 'There is no higher truth. You are the curriculum.' },
 ]
 
