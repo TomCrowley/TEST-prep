@@ -7,7 +7,7 @@ import SwipeableCard from './SwipeableCard'
 import Starburst from './Starburst'
 import XpBar from './XpBar'
 
-const HINT_DELAY_MS = 45_000
+const HINT_DELAY_MS = 60_000
 
 interface Props {
   questions: Question[]
