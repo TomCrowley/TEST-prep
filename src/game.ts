@@ -169,7 +169,7 @@ export const MEDALS: Medal[] = [
     id: 'marksman',
     name: 'Marksman',
     description: 'Get a 5-answer correct streak in one session.',
-    icon: '🎯',
+    icon: '🏹',
     repeatable: true,
   },
   {
