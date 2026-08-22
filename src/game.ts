@@ -116,7 +116,7 @@ export const MEDALS: Medal[] = [
     description: 'Rack up correct answers, lifetime.',
     icon: '🎖️',
     repeatable: true,
-    milestones: [1, 25, 100, 300, 750, 1500],
+    milestones: [1, 25, 100, 300, 750, 1500, 2500, 4000, 6000],
   },
   {
     id: 'marksman',
@@ -145,7 +145,7 @@ export const MEDALS: Medal[] = [
     description: 'Rack up question attempts, lifetime.',
     icon: '🪖',
     repeatable: true,
-    milestones: [100, 300, 750, 1500, 3000, 5000],
+    milestones: [100, 300, 750, 1500, 3000, 5000, 7500, 10000, 15000],
   },
   {
     id: 'sharpshooter',
@@ -160,7 +160,7 @@ export const MEDALS: Medal[] = [
     description: 'See new questions from the bank, lifetime.',
     icon: '🗺️',
     repeatable: true,
-    milestones: [50, 150, 400, 800, TOTAL_QUESTIONS],
+    milestones: [50, 150, 400, 800, 1500, 2500, 3500, TOTAL_QUESTIONS],
   },
 ]
 
