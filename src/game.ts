@@ -54,19 +54,20 @@ export function pointsForCorrectAnswer(streakAfter: number, difficulty: Difficul
 export interface Rank {
   name: string
   minXp: number
+  description: string
 }
 
 export const RANKS: Rank[] = [
-  { name: 'Recruit', minXp: 0 },
-  { name: 'Private', minXp: 800 },
-  { name: 'Corporal', minXp: 2000 },
-  { name: 'Sergeant', minXp: 4000 },
-  { name: 'Staff Sergeant', minXp: 7000 },
-  { name: 'Lieutenant', minXp: 11000 },
-  { name: 'Captain', minXp: 16000 },
-  { name: 'Major', minXp: 23000 },
-  { name: 'Colonel', minXp: 32000 },
-  { name: 'General', minXp: 45000 },
+  { name: 'Recruit', minXp: 0, description: 'Boots on the ground. Everyone starts here.' },
+  { name: 'Private', minXp: 800, description: 'Cleared basic. Trusted with a rifle.' },
+  { name: 'Corporal', minXp: 2000, description: 'Leads a fire team.' },
+  { name: 'Sergeant', minXp: 4000, description: 'Runs the squad, no excuses.' },
+  { name: 'Staff Sergeant', minXp: 7000, description: 'Senior NCO. Sets the standard.' },
+  { name: 'Lieutenant', minXp: 11000, description: 'First officer stripes. Leads from the front.' },
+  { name: 'Captain', minXp: 16000, description: 'Commands a full company.' },
+  { name: 'Major', minXp: 23000, description: 'Battalion staff. Plans the assault.' },
+  { name: 'Colonel', minXp: 32000, description: 'Commands a regiment.' },
+  { name: 'General', minXp: 45000, description: 'Top of the chain of command.' },
 ]
 
 export interface RankProgress {

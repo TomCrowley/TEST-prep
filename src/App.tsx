@@ -10,10 +10,11 @@ import { loadSession, saveSession, clearSession } from './sessionPersistence'
 import Home from './components/Home'
 import Practice from './components/Practice'
 import Results from './components/Results'
+import Ranks from './components/Ranks'
 
 const SESSION_LENGTH = 10
 
-type Screen = 'home' | 'loading' | 'practice' | 'results'
+type Screen = 'home' | 'loading' | 'practice' | 'results' | 'ranks'
 
 function pickSession(pool: Question[], progress: ReturnType<typeof useProgress>['progress']): Question[] {
   const unseen = pool.filter((q) => !progress[q.id])
@@ -134,9 +135,11 @@ function App() {
           onBankChange={setBank}
           onStart={startSession}
           onReset={resetAll}
+          onOpenRanks={() => setScreen('ranks')}
           error={loadError}
         />
       )}
+      {screen === 'ranks' && <Ranks xp={profile.xp} onBack={() => setScreen('home')} />}
       {screen === 'loading' && (
         <div className="screen loading">
           <div className="spinner" />

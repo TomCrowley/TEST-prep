@@ -12,6 +12,7 @@ interface Props {
   onBankChange: (bank: Bank) => void
   onStart: (section: Section | 'all') => void
   onReset: () => void
+  onOpenRanks: () => void
   error?: string | null
 }
 
@@ -36,7 +37,7 @@ function sectionStats(progress: ProgressMap, bank: Bank, section?: Section) {
 
 const BANK_LABELS: Record<Bank, string> = { sat: 'SAT', psat: 'PSAT' }
 
-export default function Home({ progress, profile, bank, onBankChange, onStart, onReset, error }: Props) {
+export default function Home({ progress, profile, bank, onBankChange, onStart, onReset, onOpenRanks, error }: Props) {
   const [confirmingReset, setConfirmingReset] = useState(false)
   const [activeMedalId, setActiveMedalId] = useState<string | null>(null)
   const overall = sectionStats(progress, bank)
@@ -62,9 +63,9 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
 
       <div className="rank-card">
         <div className="rank-top">
-          <span className="rank-name">
+          <button className="rank-name" onClick={onOpenRanks}>
             {rankProgress.rank.name} <span className="rank-xp">· {profile.xp.toLocaleString()} XP</span>
-          </span>
+          </button>
           <span className="rank-accuracy">{overall.accuracy === null ? '—' : `${overall.accuracy}% acc`}</span>
         </div>
         <XpBar xp={profile.xp} />
