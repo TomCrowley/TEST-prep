@@ -194,11 +194,16 @@ button {
   display: flex;
   gap: 10px;
   overflow-x: auto;
+  /* overflow-x: auto with overflow-y left as the visible default doesn't
+     actually stay visible -- CSS resolves it to auto too, so any vertical
+     overflow (however small) makes the row draggable/scrollable on touch,
+     even with nothing visibly clipped. Pin it shut: this row only ever
+     scrolls horizontally. */
+  overflow-y: hidden;
   /* The x2-style repeat-count badge on each medal sits at bottom: -4px with
      its own 18px height, so it pokes 4px past the medal's 52px box -- 2px
-     more than this row's padding accounted for, which triggered an
-     unwanted vertical scrollbar since overflow-x: auto implicitly clips
-     the y axis too. Extra bottom padding gives it room to fully show. */
+     more than this row's padding accounted for. Extra bottom padding gives
+     it room to fully show instead of being clipped by overflow-y: hidden. */
   padding: 2px 2px 4px;
 }
 .medal {
