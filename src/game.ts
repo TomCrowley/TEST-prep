@@ -79,7 +79,7 @@ export const RANKS: Rank[] = [
   { name: 'Corporal', minXp: 16600, description: 'Leads a fire team.' },
   { name: 'Junior Sergeant', minXp: 18900, description: 'New stripes, already running drills.' },
   { name: 'Sergeant', minXp: 21500, description: 'Runs the squad, no excuses.' },
-  { name: 'Brevet Staff Sergeant', minXp: 24400, description: 'Holding the rank on paper, not yet in full.' },
+  { name: 'Trainee Staff Sergeant', minXp: 24400, description: 'Training for the stripes, not there yet.' },
   { name: 'Staff Sergeant', minXp: 27700, description: 'Senior NCO. Sets the standard.' },
   { name: 'Second Lieutenant', minXp: 31500, description: 'First officer stripes, still finding their feet.' },
   { name: 'Lieutenant', minXp: 35800, description: 'Leads from the front.' },
