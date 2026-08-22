@@ -66,7 +66,7 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
           <button className="rank-name" onClick={onOpenRanks}>
             {rankProgress.rank.name} <span className="rank-xp">· {profile.xp.toLocaleString()} XP</span>
           </button>
-          <span className="rank-accuracy">{overall.accuracy === null ? '—' : `${overall.accuracy}% 🎯`}</span>
+          <span className="rank-accuracy">{overall.accuracy === null ? '—' : `🎯 ${overall.accuracy}%`}</span>
         </div>
         <XpBar xp={profile.xp} />
         <div className="rank-next">
