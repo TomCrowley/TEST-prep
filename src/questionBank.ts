@@ -5,7 +5,7 @@ import type { Bank, Question, Section } from './types'
 // scripts/build-question-bank.py). Kept as constants so the home screen
 // can show "seen / total" without fetching the full question sets.
 export const SECTION_TOTALS: Record<Bank, Record<Section, number>> = {
-  sat: { math: 426, reading: 938 },
+  sat: { math: 1069, reading: 1845 },
   psat: { math: 1001, reading: 1844 },
 }
 
