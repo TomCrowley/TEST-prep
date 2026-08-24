@@ -166,6 +166,13 @@ button {
   background: linear-gradient(90deg, var(--accent-2), var(--gold), var(--gold-2));
   background-size: 200% 100%;
   transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* width, background-position, and the .pulse filter below all animate on
+     this element at once -- without a stable compositor layer, Chromium can
+     leave stale raster tiles behind (ghost bands of a previous frame) that
+     only clear on the next full repaint. Force one so tile invalidation
+     stays correct through the whole animation. */
+  transform: translateZ(0);
+  will-change: transform;
 }
 /* Plays once when the bar's value actually changes -- toggled by JS, not
    a continuous loop (see XpBar.tsx). Same glow treatment as the title and
