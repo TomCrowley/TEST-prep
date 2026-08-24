@@ -4,6 +4,7 @@ import { MEDALS, getRankProgress } from '../game'
 import SwipeableCard from './SwipeableCard'
 import { useCountUp } from '../useCountUp'
 import { useScrollToTop } from '../useScrollToTop'
+import Explanation from './Explanation'
 
 interface Props {
   questions: Question[]
@@ -88,10 +89,7 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
                 <div className="choice-body" dangerouslySetInnerHTML={{ __html: q.choices[p.answer.chosenIndex] }} />
                 <p className="review-answer right">Correct answer:</p>
                 <div className="choice-body" dangerouslySetInnerHTML={{ __html: q.choices[q.correctIndex] }} />
-                <div
-                  className="feedback-explanation"
-                  dangerouslySetInnerHTML={{ __html: q.explanationHtml }}
-                />
+                <Explanation question={q} />
               </div>
             )
           })}

@@ -1068,6 +1068,23 @@ button {
   color: var(--text);
   line-height: 1.5;
 }
+.explanation-tldr {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  line-height: 1.5;
+  margin: 0 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.explanation-tldr-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin-right: 6px;
+}
 
 .primary-button {
   background: var(--accent);

@@ -6,6 +6,7 @@ import { useScrollToTop } from '../useScrollToTop'
 import SwipeableCard from './SwipeableCard'
 import Starburst from './Starburst'
 import XpBar from './XpBar'
+import Explanation from './Explanation'
 
 const HINT_DELAY_MS = 60_000
 
@@ -202,10 +203,7 @@ export default function Practice({
                 'Not quite'
               )}
             </p>
-            <div
-              className="feedback-explanation"
-              dangerouslySetInnerHTML={{ __html: question.explanationHtml }}
-            />
+            <Explanation question={question} />
           </div>
         )}
       </SwipeableCard>

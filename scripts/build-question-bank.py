@@ -24,9 +24,24 @@ import json
 import os
 
 
+def load_existing_tldrs(path: str) -> dict:
+    # Re-running this script (e.g. to refresh the question bank) shouldn't
+    # throw away the tldr field scripts/summarize-explanations.py paid an
+    # LLM to generate -- carry it forward for any question id that still
+    # exists, keyed by id so it survives even if the source list reorders.
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding='utf-8') as f:
+        return {q['id']: q.get('tldr') for q in json.load(f)}
+
+
 def convert(source_path: str, out_dir: str, id_prefix: str, out_prefix: str) -> None:
     with open(source_path) as f:
         data = json.load(f)
+
+    math_path = os.path.join(out_dir, f'{out_prefix}math.json')
+    reading_path = os.path.join(out_dir, f'{out_prefix}reading.json')
+    existing_tldrs = {**load_existing_tldrs(math_path), **load_existing_tldrs(reading_path)}
 
     math_questions = []
     reading_questions = []
@@ -47,8 +62,9 @@ def convert(source_path: str, out_dir: str, id_prefix: str, out_prefix: str) -> 
         except ValueError:
             continue
 
+        question_id = id_prefix + (entry.get('questionId') or uid)
         question = {
-            'id': id_prefix + (entry.get('questionId') or uid),
+            'id': question_id,
             'section': 'math' if entry.get('module') == 'math' else 'reading',
             'skill': entry.get('primary_class_cd_desc') or entry.get('skill_desc') or 'General',
             'difficulty': entry.get('difficulty'),
@@ -57,6 +73,7 @@ def convert(source_path: str, out_dir: str, id_prefix: str, out_prefix: str) -> 
             'choices': [o.get('content', '') for o in options],
             'correctIndex': correct_index,
             'explanationHtml': content.get('rationale'),
+            'tldr': existing_tldrs.get(question_id),
         }
 
         if question['section'] == 'math':
@@ -65,13 +82,15 @@ def convert(source_path: str, out_dir: str, id_prefix: str, out_prefix: str) -> 
             reading_questions.append(question)
 
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, f'{out_prefix}math.json'), 'w') as f:
+    with open(math_path, 'w') as f:
         json.dump(math_questions, f, separators=(',', ':'))
-    with open(os.path.join(out_dir, f'{out_prefix}reading.json'), 'w') as f:
+    with open(reading_path, 'w') as f:
         json.dump(reading_questions, f, separators=(',', ':'))
 
+    carried = sum(1 for q in math_questions + reading_questions if q['tldr'] is not None)
     print(f'math: {len(math_questions)} questions')
     print(f'reading: {len(reading_questions)} questions')
+    print(f'tldr carried over from existing files: {carried}')
 
 
 if __name__ == '__main__':

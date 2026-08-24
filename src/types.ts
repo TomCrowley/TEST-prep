@@ -16,6 +16,10 @@ export interface Question {
   correctIndex: number
   /** HTML explanation of the correct answer. */
   explanationHtml: string
+  /** One-sentence plain-text summary of explanationHtml, shown before it.
+   *  Null: not yet reviewed. Empty string: reviewed, judged not worth one
+   *  (short/already-terse explanation). Non-empty: the summary. */
+  tldr: string | null
 }
 
 export interface QuestionStat {
