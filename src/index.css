@@ -854,6 +854,14 @@ button {
   justify-content: center;
   pointer-events: none;
   z-index: 60;
+  /* Mounts fresh right when a correct answer is tapped -- often moments
+     after swiping into a new question, while useScrollToTop's iOS
+     momentum-scroll fight (see that hook's comment) may still be settling.
+     A position: fixed element inserted mid-scroll can inherit a stale
+     composited frame for a tick, landing a few px off. Force its own
+     stable layer so it paints fresh against the current viewport instead. */
+  transform: translateZ(0);
+  will-change: transform;
 }
 .starburst-flash {
   position: absolute;
