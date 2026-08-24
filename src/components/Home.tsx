@@ -61,11 +61,11 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
 
       {error && <p className="error-message">{error}</p>}
 
-      <div className="rank-card">
+      <button className="rank-card" onClick={onOpenRanks}>
         <div className="rank-top">
-          <button className="rank-name" onClick={onOpenRanks}>
+          <span className="rank-name">
             {rankProgress.rank.name} <span className="rank-xp">· {profile.xp.toLocaleString()} XP</span>
-          </button>
+          </span>
           <span className="rank-accuracy">{overall.accuracy === null ? '—' : `🎯 ${overall.accuracy}%`}</span>
         </div>
         <XpBar xp={profile.xp} />
@@ -79,7 +79,7 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
             {overall.answered}/{overall.total} seen
           </span>
         </div>
-      </div>
+      </button>
 
       <div className="medal-case">
         {MEDALS.map((medal) => {
