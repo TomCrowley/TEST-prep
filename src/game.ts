@@ -187,6 +187,20 @@ export const MEDALS: Medal[] = [
     repeatable: true,
   },
   {
+    id: 'deadeye',
+    name: 'Deadeye',
+    description: 'Get 8 of 10 questions right in one session.',
+    icon: '👁️',
+    repeatable: true,
+  },
+  {
+    id: 'sniper',
+    name: 'Sniper',
+    description: 'Get 9 of 10 questions right in one session.',
+    icon: '🔭',
+    repeatable: true,
+  },
+  {
     id: 'veteran',
     name: 'Veteran',
     description: 'Rack up question attempts, lifetime.',
@@ -299,6 +313,8 @@ export function evaluateNewMedals(
   qualifiesThisSession('marksman', summary.maxStreak >= 5)
   qualifiesThisSession('unstoppable', summary.maxStreak >= 8)
   qualifiesThisSession('ace', summary.total >= 10 && summary.correctCount === summary.total)
+  qualifiesThisSession('deadeye', summary.total >= 10 && summary.correctCount >= 8)
+  qualifiesThisSession('sniper', summary.total >= 10 && summary.correctCount >= 9)
   qualifiesThisSession('sharpshooter', summary.hardCorrectCount >= 5)
 
   qualifiesMilestones('first_blood', lifetime.correct)
