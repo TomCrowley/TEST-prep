@@ -147,7 +147,7 @@ export default function Practice({
         </div>
       </div>
 
-      <SwipeableCard className="question-card" enabled={hasAnswered} onSwipe={next} rotate>
+      <SwipeableCard className="question-card" enabled={hasAnswered} onSwipe={next}>
         <div className="tag-row">
           <span className="skill-tag">{question.skill}</span>
           {question.difficulty && (

@@ -10,16 +10,15 @@ interface Props {
   className?: string
   enabled: boolean
   onSwipe: () => void
-  /** Tilt while dragging, like a card being flicked away. Off for full-screen swipes. */
-  rotate?: boolean
 }
 
 // Swipe-left-to-dismiss, built on framer-motion's own drag gesture engine
 // instead of hand-rolled touch tracking -- it already handles axis
 // disambiguation, velocity, and cross-browser touch quirks correctly.
-export default function SwipeableCard({ children, className, enabled, onSwipe, rotate = false }: Props) {
+// Horizontal (not vertical) so the gesture never fights a card's own
+// vertical page scroll on long questions/explanations.
+export default function SwipeableCard({ children, className, enabled, onSwipe }: Props) {
   const x = useMotionValue(0)
-  const rotateValue = useTransform(x, [-300, 300], rotate ? [-10, 10] : [0, 0])
   const opacity = useTransform(x, [-300, 0], [0.2, 1])
 
   function handleDragEnd(_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
@@ -42,7 +41,7 @@ export default function SwipeableCard({ children, className, enabled, onSwipe, r
   return (
     <motion.div
       className={className}
-      style={{ x, rotate: rotateValue, opacity }}
+      style={{ x, opacity }}
       drag={enabled ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={{ left: 1, right: 0.15 }}
