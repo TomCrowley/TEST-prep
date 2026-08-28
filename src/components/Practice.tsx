@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Lightbulb, Shuffle as ShuffleIcon, X } from 'lucide-react'
 import type { Question, Section, SessionAnswer } from '../types'
 import { computeSessionSummary, getStreakTier, pointsForCorrectAnswer } from '../game'
 import { shuffle } from '../shuffle'
@@ -146,7 +147,7 @@ export default function Practice({
     <div className="screen practice">
       <div className="practice-header">
         <button className="icon-button" onClick={onExit} aria-label="Exit practice">
-          ✕
+          <X size={20} />
         </button>
         <div className="progress-bar">
           <div className="progress-bar-fill" style={{ width: `${((index + 1) / questions.length) * 100}%` }} />
@@ -177,7 +178,7 @@ export default function Practice({
             aria-label="Get a different question (ends your current streak)"
             title="Get a different question -- ends your current streak"
           >
-            🔀
+            <ShuffleIcon size={14} />
           </button>
         )}
         <div className="tag-row">
@@ -219,7 +220,8 @@ export default function Practice({
 
         {!hasAnswered && hintAvailable && (
           <button className="hint-button" onClick={revealHint}>
-            💡 Use hint (removes 2 wrong answers, halves XP)
+            <Lightbulb size={16} />
+            Use hint (removes 2 wrong answers, halves XP)
           </button>
         )}
 

@@ -145,6 +145,9 @@ button {
   color: var(--text-muted);
 }
 .rank-accuracy {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: 13px;
   color: var(--text-muted);
   flex-shrink: 0;
@@ -299,12 +302,14 @@ button {
   margin-top: 2px;
 }
 .medal-detail-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-left: auto;
   flex-shrink: 0;
   background: none;
   border: none;
-  color: var(--text-muted);
-  font-size: 16px;
+  color: var(--text);
   padding: 4px;
   cursor: pointer;
 }
@@ -498,10 +503,12 @@ button {
   gap: 12px;
 }
 .icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  font-size: 18px;
-  color: var(--text-muted);
+  color: var(--text);
   padding: 8px;
   cursor: pointer;
   line-height: 1;
@@ -666,17 +673,18 @@ button {
 /* Pinned to the card's corner (not part of .tag-row's flex flow) so it
    stays top-right no matter how the skill/difficulty tags wrap. */
 .shuffle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   top: 20px;
   right: 20px;
   background: none;
   border: 1px solid var(--border);
-  color: var(--text-muted);
+  color: var(--text);
   border-radius: 999px;
   width: 26px;
   height: 26px;
-  font-size: 13px;
-  line-height: 1;
   cursor: pointer;
 }
 .shuffle-button:active {
@@ -1143,6 +1151,9 @@ button {
 }
 
 .hint-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: none;
   border: 1px solid var(--gold);
   color: var(--gold);
@@ -1152,6 +1163,9 @@ button {
   font-weight: 600;
   cursor: pointer;
   animation: hint-in 0.3s ease-out;
+}
+.hint-button svg {
+  flex-shrink: 0;
 }
 .hint-button:active {
   background: var(--gold-bg);

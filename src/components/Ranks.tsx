@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'lucide-react'
 import { RANKS, getRankProgress } from '../game'
 
 interface Props {
@@ -12,7 +13,7 @@ export default function Ranks({ xp, onBack }: Props) {
     <div className="screen ranks">
       <div className="page-header">
         <button className="icon-button" onClick={onBack} aria-label="Back to home">
-          ←
+          <ArrowLeft size={20} />
         </button>
         <h1 className="page-title">Ranks</h1>
       </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Target, X } from 'lucide-react'
 import type { Bank, ProgressMap, Section } from '../types'
 import { SECTION_TOTALS, bankOfQuestionId } from '../questionBank'
 import { MEDALS, getRankProgress } from '../game'
@@ -66,7 +67,15 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
           <span className="rank-name">
             {rankProgress.rank.name} <span className="rank-xp">· {profile.xp.toLocaleString()} XP</span>
           </span>
-          <span className="rank-accuracy">{overall.accuracy === null ? '—' : `🎯 ${overall.accuracy}%`}</span>
+          <span className="rank-accuracy">
+            {overall.accuracy === null ? (
+              '—'
+            ) : (
+              <>
+                <Target size={13} /> {overall.accuracy}%
+              </>
+            )}
+          </span>
         </div>
         <XpBar xp={profile.xp} />
         <div className="rank-next">
@@ -116,7 +125,7 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
             <div className="medal-detail-desc">{activeMedal.description}</div>
           </div>
           <button className="medal-detail-close" onClick={() => setActiveMedalId(null)} aria-label="Close">
-            ✕
+            <X size={16} />
           </button>
         </div>
       )}
