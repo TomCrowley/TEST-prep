@@ -658,15 +658,23 @@ button {
   color: var(--bad);
 }
 
-.shuffle-button {
+/* Pinned to the row's right edge (pushing difficulty-tag ahead of it, or
+   down to its own wrapped line first if the row is too narrow) so the
+   shuffle button -- earlier in source order -- keeps the top row instead. */
+.difficulty-tag {
   margin-left: auto;
+}
+
+.shuffle-button {
+  align-self: flex-start;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-muted);
   border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 600;
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+  line-height: 1;
   cursor: pointer;
 }
 .shuffle-button:active {
