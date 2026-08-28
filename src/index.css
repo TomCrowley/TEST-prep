@@ -662,9 +662,6 @@ button {
 .difficulty-tag.difficulty-H {
   color: var(--bad);
 }
-.difficulty-tag {
-  margin-left: auto;
-}
 
 /* Pinned to the card's corner (not part of .tag-row's flex flow) so it
    stays top-right no matter how the skill/difficulty tags wrap. */
