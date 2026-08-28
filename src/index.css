@@ -658,6 +658,21 @@ button {
   color: var(--bad);
 }
 
+.shuffle-button {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.shuffle-button:active {
+  background: var(--bg);
+}
+
 .passage {
   font-size: 15px;
   color: var(--text);

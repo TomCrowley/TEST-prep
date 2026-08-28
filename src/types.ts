@@ -37,4 +37,8 @@ export interface SessionAnswer {
   correct: boolean
   /** Whether the hint (eliminate 2 wrong answers) was used before answering -- halves the XP earned. */
   hintUsed: boolean
+  /** True if this answer's question replaced one shuffled away, severing
+   *  whatever streak was building before it -- this answer starts fresh
+   *  (streak 1 if correct, 0 if not) regardless of what came before. */
+  brokeStreak?: boolean
 }

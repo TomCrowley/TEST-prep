@@ -35,6 +35,11 @@ function App() {
   const [screen, setScreen] = useState<Screen>(restored?.screen ?? 'home')
   const [section, setSection] = useState<Section | 'all'>(restored?.section ?? 'all')
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>(restored?.questions ?? [])
+  // The full pool the current session was drawn from -- kept around only so
+  // the shuffle button has other questions to swap in. Empty after a
+  // refresh mid-session (resumed from sessionPersistence, not re-fetched);
+  // shuffleQuestion no-ops until a fresh startSession() repopulates it.
+  const [pool, setPool] = useState<Question[]>([])
   const [sessionResult, setSessionResult] = useState<SessionResult | null>(
     restored?.screen === 'results' ? restored.result : null,
   )
@@ -81,8 +86,9 @@ function App() {
     setScreen('loading')
     setLoadError(null)
     try {
-      const pool = await loadQuestions(bank, chosenSection)
-      setSessionQuestions(pickSession(pool, progress))
+      const freshPool = await loadQuestions(bank, chosenSection)
+      setPool(freshPool)
+      setSessionQuestions(pickSession(freshPool, progress))
       setSessionResult(null)
       sessionStartXp.current = profile.xp
       setScreen('practice')
@@ -90,6 +96,23 @@ function App() {
       setLoadError('Could not load questions. Check your connection and try again.')
       setScreen('home')
     }
+  }
+
+  // Swaps the question at `index` for a random one not already in this
+  // session, preferring not-yet-seen questions the same way pickSession
+  // does. No-ops if the pool isn't loaded (e.g. a refresh mid-session) or
+  // every pool question is already in play.
+  function shuffleQuestion(index: number) {
+    setSessionQuestions((prev) => {
+      const usedIds = new Set(prev.map((q) => q.id))
+      const candidates = pool.filter((q) => !usedIds.has(q.id))
+      if (candidates.length === 0) return prev
+      const unseen = candidates.filter((q) => !progress[q.id])
+      const replacement = shuffle(unseen.length > 0 ? unseen : candidates)[0]
+      const next = [...prev]
+      next[index] = replacement
+      return next
+    })
   }
 
   function finishSession(answers: SessionAnswer[], questionsById: Map<string, Question>) {
@@ -155,6 +178,7 @@ function App() {
           initialAnswers={resumedPractice?.answers}
           onAnswer={recordAnswer}
           onXpEarned={addXp}
+          onShuffle={shuffleQuestion}
           onProgressChange={handlePracticeProgress}
           onFinish={finishSession}
           onExit={goHome}

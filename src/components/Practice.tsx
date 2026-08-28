@@ -18,6 +18,7 @@ interface Props {
   initialAnswers?: SessionAnswer[]
   onAnswer: (questionId: string, section: Section, correct: boolean) => void
   onXpEarned: (points: number) => void
+  onShuffle: (index: number) => void
   onProgressChange: (index: number, selected: number | null, answers: SessionAnswer[]) => void
   onFinish: (answers: SessionAnswer[], questionsById: Map<string, Question>) => void
   onExit: () => void
@@ -33,6 +34,7 @@ export default function Practice({
   initialAnswers = [],
   onAnswer,
   onXpEarned,
+  onShuffle,
   onProgressChange,
   onFinish,
   onExit,
@@ -44,6 +46,10 @@ export default function Practice({
   const [hintAvailable, setHintAvailable] = useState(false)
   const [eliminated, setEliminated] = useState<Set<number>>(new Set())
   const [hintUsed, setHintUsed] = useState(false)
+  // Set by the shuffle button, consumed by the next answer submitted for
+  // this slot -- marks it as severing whatever streak was building before
+  // the shuffle, without shuffling itself counting as an attempt.
+  const [pendingStreakBreak, setPendingStreakBreak] = useState(false)
   // XP is applied the instant a correct answer is chosen, but the HUD bar
   // should only visibly update once the *next* question is on screen --
   // otherwise the fill/glow plays while still looking at the feedback for
@@ -53,7 +59,9 @@ export default function Practice({
   const questionsById = useMemo(() => new Map(questions.map((q) => [q.id, q])), [questions])
   const summary = useMemo(() => computeSessionSummary(answers, questionsById), [answers, questionsById])
   const lastPoint = summary.points[summary.points.length - 1] ?? null
-  const currentStreak = lastPoint?.streakAfter ?? 0
+  // Reflect a shuffle's streak break immediately in the HUD, even though
+  // the summary itself only updates once an answer is actually recorded.
+  const currentStreak = pendingStreakBreak ? 0 : (lastPoint?.streakAfter ?? 0)
   const currentTier = getStreakTier(currentStreak)
 
   const question = questions[index]
@@ -75,7 +83,9 @@ export default function Practice({
   }, [index])
 
   // A hint (eliminate 2 wrong answers) unlocks after spending 45s stuck on
-  // the same unanswered question. Reset on every new question.
+  // the same unanswered question. Reset on every new question -- keyed on
+  // the question's own id, not just `index`, since a shuffle swaps the
+  // question in place without changing index.
   useEffect(() => {
     setHintAvailable(false)
     setEliminated(new Set())
@@ -83,7 +93,7 @@ export default function Practice({
     if (hasAnswered) return
     const timeout = setTimeout(() => setHintAvailable(true), HINT_DELAY_MS)
     return () => clearTimeout(timeout)
-  }, [index, hasAnswered])
+  }, [question.id, hasAnswered])
 
   // Keeps the progress bar and streak HUD visible on every new question.
   useScrollToTop(index)
@@ -93,11 +103,23 @@ export default function Practice({
     const correct = choiceIndex === question.correctIndex
     setSelected(choiceIndex)
     onAnswer(question.id, question.section, correct)
-    setAnswers((prev) => [...prev, { questionId: question.id, chosenIndex: choiceIndex, correct, hintUsed }])
+    setAnswers((prev) => [
+      ...prev,
+      { questionId: question.id, chosenIndex: choiceIndex, correct, hintUsed, brokeStreak: pendingStreakBreak },
+    ])
+    setPendingStreakBreak(false)
     if (correct) {
       setBurstOrigin({ x: event.clientX, y: event.clientY })
+      // currentStreak is already 0 here if a shuffle broke it, so this
+      // naturally restarts the streak at 1 rather than continuing the old one.
       onXpEarned(pointsForCorrectAnswer(currentStreak + 1, question.difficulty, hintUsed))
     }
+  }
+
+  function requestNewQuestion() {
+    if (hasAnswered) return
+    onShuffle(index)
+    setPendingStreakBreak(true)
   }
 
   function revealHint() {
@@ -154,6 +176,16 @@ export default function Practice({
             <span className={`difficulty-tag difficulty-${question.difficulty}`}>
               {DIFFICULTY_LABEL[question.difficulty] ?? question.difficulty}
             </span>
+          )}
+          {!hasAnswered && (
+            <button
+              className="shuffle-button"
+              onClick={requestNewQuestion}
+              aria-label="Get a different question (ends your current streak)"
+              title="Get a different question -- ends your current streak"
+            >
+              🔀 Shuffle
+            </button>
           )}
         </div>
 

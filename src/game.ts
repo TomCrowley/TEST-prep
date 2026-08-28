@@ -251,6 +251,7 @@ export function computeSessionSummary(answers: SessionAnswer[], questionsById: M
 
   for (const answer of answers) {
     const question = questionsById.get(answer.questionId)
+    if (answer.brokeStreak) streak = 0
     if (answer.correct) {
       streak += 1
       correctCount += 1
