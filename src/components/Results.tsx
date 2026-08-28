@@ -61,7 +61,7 @@ export default function Results({ questions, result, onPracticeAgain, onHome }: 
           <div className="medals-earned-list">
             {earnedMedals.map((medal) => (
               <div className="medal-earned-item" key={medal.id}>
-                <span className="medal-icon">{medal.icon}</span>
+                <img className="medal-icon" src={medal.icon} alt="" />
                 <div>
                   <div className="medal-earned-name">{medal.name}</div>
                   <div className="medal-earned-desc">{medal.description}</div>

@@ -144,6 +144,7 @@ export interface Medal {
   id: string
   name: string
   description: string
+  /** Path under /public to this medal's icon (Fluent Emoji's 3D render). */
   icon: string
   // All medals can be earned again -- session-based ones (Marksman,
   // Unstoppable, Ace, Sharpshooter) whenever a later session requalifies,
@@ -156,12 +157,19 @@ export interface Medal {
   milestones?: number[]
 }
 
+// public/medals isn't processed by Vite's bundler, so these need the
+// configured base URL prepended by hand (matches questionBank.ts's fetch of
+// public/data) -- a bare '/medals/...' 404s once deployed under /TEST-prep/.
+function medalIcon(name: string): string {
+  return `${import.meta.env.BASE_URL}medals/${name}.png`
+}
+
 export const MEDALS: Medal[] = [
   {
     id: 'first_blood',
     name: 'First Blood',
     description: 'Rack up correct answers, lifetime.',
-    icon: '🎖️',
+    icon: medalIcon('first_blood'),
     repeatable: true,
     milestones: [1, 25, 100, 300, 750, 1500, 2500, 4000, 6000],
   },
@@ -169,42 +177,42 @@ export const MEDALS: Medal[] = [
     id: 'marksman',
     name: 'Marksman',
     description: 'Get a 5-answer correct streak in one session.',
-    icon: '🏹',
+    icon: medalIcon('marksman'),
     repeatable: true,
   },
   {
     id: 'unstoppable',
     name: 'Unstoppable',
     description: 'Get an 8-answer correct streak in one session.',
-    icon: '🔥',
+    icon: medalIcon('unstoppable'),
     repeatable: true,
   },
   {
     id: 'ace',
     name: 'Ace',
     description: 'Answer every question correctly in a full session.',
-    icon: '🏆',
+    icon: medalIcon('ace'),
     repeatable: true,
   },
   {
     id: 'deadeye',
     name: 'Deadeye',
     description: 'Get 8 of 10 questions right in one session.',
-    icon: '👁️',
+    icon: medalIcon('deadeye'),
     repeatable: true,
   },
   {
     id: 'sniper',
     name: 'Sniper',
     description: 'Get 9 of 10 questions right in one session.',
-    icon: '🔭',
+    icon: medalIcon('sniper'),
     repeatable: true,
   },
   {
     id: 'veteran',
     name: 'Veteran',
     description: 'Rack up question attempts, lifetime.',
-    icon: '🪖',
+    icon: medalIcon('veteran'),
     repeatable: true,
     milestones: [100, 300, 750, 1500, 3000, 5000, 7500, 10000, 15000],
   },
@@ -212,14 +220,14 @@ export const MEDALS: Medal[] = [
     id: 'sharpshooter',
     name: 'Sharpshooter',
     description: 'Get 5 Hard-difficulty questions right in one session.',
-    icon: '💥',
+    icon: medalIcon('sharpshooter'),
     repeatable: true,
   },
   {
     id: 'recon',
     name: 'Recon',
     description: 'See new questions from the bank, lifetime.',
-    icon: '🗺️',
+    icon: medalIcon('recon'),
     repeatable: true,
     milestones: [50, 150, 400, 800, 1500, 2500, 3500, TOTAL_QUESTIONS],
   },

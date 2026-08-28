@@ -102,7 +102,7 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
               title={`${medal.name} — ${medal.description}`}
               onClick={() => setActiveMedalId((id) => (id === medal.id ? null : medal.id))}
             >
-              <span className="medal-icon">{medal.icon}</span>
+              <img className="medal-icon" src={medal.icon} alt="" />
               {medal.repeatable && count > 1 && <span className="medal-count">x{count}</span>}
             </button>
           )
@@ -111,7 +111,7 @@ export default function Home({ progress, profile, bank, onBankChange, onStart, o
 
       {activeMedal && (
         <div className="medal-detail">
-          <span className="medal-detail-icon">{activeMedal.icon}</span>
+          <img className="medal-detail-icon" src={activeMedal.icon} alt="" />
           <div>
             <div className="medal-detail-name">
               {activeMedal.name}
