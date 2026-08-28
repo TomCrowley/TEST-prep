@@ -612,6 +612,7 @@ button {
 }
 
 .question-card {
+  position: relative;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -628,6 +629,10 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  /* Leaves room for the shuffle button, pinned to the card's top-right
+     corner independent of this row's own flow -- otherwise a wide
+     skill/difficulty pair would wrap under it instead of around it. */
+  padding-right: 34px;
 }
 
 .skill-tag {
@@ -657,16 +662,16 @@ button {
 .difficulty-tag.difficulty-H {
   color: var(--bad);
 }
-
-/* Pinned to the row's right edge (pushing difficulty-tag ahead of it, or
-   down to its own wrapped line first if the row is too narrow) so the
-   shuffle button -- earlier in source order -- keeps the top row instead. */
 .difficulty-tag {
   margin-left: auto;
 }
 
+/* Pinned to the card's corner (not part of .tag-row's flex flow) so it
+   stays top-right no matter how the skill/difficulty tags wrap. */
 .shuffle-button {
-  align-self: flex-start;
+  position: absolute;
+  top: 20px;
+  right: 20px;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-muted);

@@ -170,18 +170,18 @@ export default function Practice({
       </div>
 
       <SwipeableCard className="question-card" enabled={hasAnswered} onSwipe={next}>
+        {!hasAnswered && (
+          <button
+            className="shuffle-button"
+            onClick={requestNewQuestion}
+            aria-label="Get a different question (ends your current streak)"
+            title="Get a different question -- ends your current streak"
+          >
+            🔀
+          </button>
+        )}
         <div className="tag-row">
           <span className="skill-tag">{question.skill}</span>
-          {!hasAnswered && (
-            <button
-              className="shuffle-button"
-              onClick={requestNewQuestion}
-              aria-label="Get a different question (ends your current streak)"
-              title="Get a different question -- ends your current streak"
-            >
-              🔀
-            </button>
-          )}
           {question.difficulty && (
             <span className={`difficulty-tag difficulty-${question.difficulty}`}>
               {DIFFICULTY_LABEL[question.difficulty] ?? question.difficulty}
